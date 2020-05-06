@@ -23,11 +23,10 @@ app.factory("overviewService", function($http) {
   
   service.getLineInfoData = function(){
 	  return $http.get(gUrl + "MachineCapacity");
-	  //return $http.get("https://script.google.com/macros/s/AKfycbzBwYZnMhmw1DyK6QApwYFjUJxvlozt_mB31TiG_3ZZARQK9ip8/exec?id=1AfeXWTxKkcTcIp_JUj_GENl8STchqU1ncXMmNAPYMyg&sheet=skidtags");  
   };
   
   service.getMessages = function(){
-	return $http.get("https://script.google.com/macros/s/AKfycbzBwYZnMhmw1DyK6QApwYFjUJxvlozt_mB31TiG_3ZZARQK9ip8/exec?id=1AfeXWTxKkcTcIp_JUj_GENl8STchqU1ncXMmNAPYMyg&sheet=message");	
+	  return $http.get(gUrl + "messages");
   };
 
   return service;
