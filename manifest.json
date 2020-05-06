@@ -4,7 +4,7 @@
     "name": "Production | Malpack",
     "scope": "/finley-interface/",
     "display": "standalone",
-    "start_url": "http://localhost/finley-interface/login.html",
+    "start_url": "http://istuffer-malpack.github.io/finley-interface/finley-interface/login.html",
     "short_name": "Production | Ma",
     "theme_color": "transparent",
     "description": "Malpack Production Interface",
@@ -19,6 +19,6 @@
             "sizes": "144x144"
         }
     ],
-    "url": "http://localhost/finley-interface/login.html",
+    "url": "http://istuffer-malpack.github.io/finley-interface",
     "screenshots": []
 }
