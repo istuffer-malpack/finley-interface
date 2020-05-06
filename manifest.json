@@ -1,0 +1,24 @@
+{
+    "dir": "ltr",
+    "lang": "en",
+    "name": "Production | Malpack",
+    "scope": "/finley-interface/",
+    "display": "standalone",
+    "start_url": "http://localhost/finley-interface/login.html",
+    "short_name": "Production | Ma",
+    "theme_color": "transparent",
+    "description": "Malpack Production Interface",
+    "orientation": "any",
+    "background_color": "transparent",
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "/finley-interface/img/favicon.png",
+            "type": "image/png",
+            "sizes": "144x144"
+        }
+    ],
+    "url": "http://localhost/finley-interface/login.html",
+    "screenshots": []
+}

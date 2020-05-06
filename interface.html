@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Production | Malpack</title>
+	<meta name="description" content="Malpack Production Interface">
+	<meta name="author" content="Istuffer Sanchez">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="noimageindex, noindex, nofollow, nosnippet">
+	<link rel="manifest" href="./manifest.json">
+	<link rel="stylesheet" href="./css/normalize.css">
+	<link rel="stylesheet" href="./css/skeleton.css">
+	<link rel="stylesheet" href="./css/style.css">
+	<link rel="stylesheet" href="./css/circle.css">  
+	<link rel="icon" type="image/png" href="./img/favicon.png">
+	<script src="./js/app.js"></script>	
+</head>
+<body class="dark-theme" ng-app="app" ng-controller="overviewController as view" ng-cloak> 
+	<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@pwabuilder/pwainstall"></script>
+	<pwa-install></pwa-install> -->
+
+  <div class="section header u-max-full-width">
+    <div class="row">
+      <div class="three columns">
+        <img src="./img/malpack-logo.png" alt="Malpack">        
+      </div>
+	  <div class="three columns center-aligned">
+        <select id="machineLine" class="no-border" ng-model="linen" ng-change="showChart(linen)">
+			<option ng-repeat="line in machineLine" value="{{line}}">{{line}}</option>
+		</select>        
+      </div>
+	  <div class="six columns dd center-aligned">	  
+			<div class="dropdown print-label-dd">
+				<button class="white-text">Print Label</button>
+				<div class="dropdown-content black-text">
+					<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick='showModal("printLabelCoretag")'>Core Tags</p>
+					<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick='showModal("printLabelBarcode")'>Bar Codes</p>
+					<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick='showModal("printLabelTags")'>Skid Tags</p>
+				</div>
+			</div>			
+			<div class="dropdown">
+						<button class="button button-info">Daily Operator Checklist</button>
+				<div class="dropdown-content no-padding">
+					<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick="showModal('dailyChecklistForm')">
+						Record Checklist
+					</p>
+					<p href="#" class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick="showModal('dailyChecklistReport')">View Report</p>
+				</div>
+			</div>
+		
+			<div class="dropdown">
+			  <span class="button button-orange">2019 Customer Return</span>
+			  <div class="dropdown-content black-text no-padding">
+				<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick="showReport('axis')">Axis</p>
+				<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick="showReport('platinum')">Platinum Max</p>
+				<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick="showReport('promax')">Pro Max</p>
+				<p class="dropdown-item button button-white gray-text productreturn no-border w-100" onclick="showReport('stretchmax')">Stretch Max</p>
+			  </div>
+			</div>
+			<div class="dropdown">
+			  <img class="icon" src="./img/bell.png" alt="Messages">
+			  <span class="badge pulsate" data-badge="{{messages.length}}" ng-show="messages.length"></span>
+			  <div class="dropdown-content black-text no-padding" style="left: -250px;width:350px;">
+				<h6 class="padding-15 secondary-bg white-text center-aligned no-margin">MESSAGE BOARD</h6>
+				<div class="hd-message-info">
+					<div ng-repeat="msg in messages">
+						<div class="hd-message-sn row">
+							<div class="hd-message-img two columns">
+							   <img src="./img/user.png"/>
+							</div>
+							<div class="hd-mg-ctn nine columns black-text" onclick="showMessage(this)">
+							   <h6>{{msg.Operator.split('/')[0]}} <span class="small">({{msg.Timestamp  | date: 'MMM dd hh:mma'}})</span></h6>
+							   <p>{{msg.Message}}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="red-bg white-text center-aligned w-100">
+					<span class="row" onClick="showModal('sendMessageForm')" style="padding: 15px 0;display: block;font-size: 18px;">Send Message</span>											
+				</div>
+			  </div>
+			</div>
+			<div class="dropdown user-dd">
+			  <img class="icon" src="./img/user.png" alt="User">
+			  <span class="text-normal white-text">{{user.split("/")[1]}}</span>
+			  <div class="dropdown-content" style="left: -84px;">
+				<p class="dropdown-item button button-info productreturn no-border w-100 sign-out">Sign Out</p>
+			  </div>
+			</div>
+      </div>
+    </div>
+  </div>  
+  <div class="container main u-max-full-width">	
+	<div class="top-content row">
+		<div class="three columns box">
+			<div class="row">
+				<div class="five columns"><h5>STATUS: </h5></div>
+				<div class="seven columns">
+					<span class="neon-green-text center-aligned" ng-repeat="lineInfo in lineData | filter: linen" ng-if="(lineInfo.CURRENT_SPEED).length">RUNNING</span>
+					<span class="neon-red-text center-aligned" ng-repeat="lineInfo in lineData | filter: linen" ng-if="!(lineInfo.CURRENT_SPEED).length">DOWN</span>
+				</div>
+			</div>				
+				<div class="row">
+					<h6 class="two columns no-margin">Speed: </h6>
+					<span class="indigo-text four columns" ng-repeat="lineInfo in lineData | filter: linen">{{lineInfo.CURRENT_SPEED.split('/')[0]}} m/min</span>
+					<h6 class="two columns">Output: </h6>
+					<span class="indigo-text four columns" ng-repeat="lineInfo in lineData | filter: linen">{{lineInfo.CURRENT_SPEED.split('/')[1]}} kg/hr</span>
+				</div>
+				<div class="row">
+					<h6 class="three columns">Vacuum Settings:</h6>
+					<span class="indigo-text three columns padding-top-10" ng-repeat="lineInfo in lineData | filter: linen">VB1: {{lineInfo.VACUUM_SETTINGS.split('/')[0]}}</span>
+					<span class="indigo-text three columns padding-top-10" ng-repeat="lineInfo in lineData | filter: linen">VB3: {{lineInfo.VACUUM_SETTINGS.split('/')[2]}}</span>
+					<span class="indigo-text three columns padding-top-10" ng-repeat="lineInfo in lineData | filter: linen">VB2: {{lineInfo.VACUUM_SETTINGS.split('/')[1]}}</span>
+				</div>		
+		</div>
+		<div class="three columns box">
+			<h5>DAILY PRODUCTION</h5>
+			<div class="row">
+				<div class="eight columns">
+					<div class="row">			
+						<h6 class="six columns no-margin">Scheduled: </h6>
+						<span class="indigo-text six columns" ng-repeat="lineInfo in lineData | filter: linen">{{lineInfo.SCHEDULED_TOTAL_LBS | number:0}} lbs.</span>				
+					</div>
+					<div class="row">
+						<h6 class="six columns no-margin">@ Current Run: </h6>
+						<span class="indigo-text six columns" ng-repeat="lineInfo in lineData | filter: linen">{{lineInfo.PRODUCTION_AT_CURRENT_SPEED | number:0}} lbs.</span>				
+					</div>
+				</div>
+				<div class="four columns" ng-repeat="lineInfo in lineData | filter: linen">
+					<div class="c100 p{{(lineInfo.PRODUCED/lineInfo.PRODUCTION_ORDERS)*100 | number:0}}">
+					  <span class="{{((lineInfo.PRODUCED/lineInfo.PRODUCTION_ORDERS)*100) >= 60 ? 'info':'orange'}}-text">{{((lineInfo.PRODUCED/lineInfo.PRODUCTION_ORDERS)*100 | number:0) == 0 ? 0 : (lineInfo.PRODUCED/lineInfo.PRODUCTION_ORDERS)*100 | number:0}}%</span>
+					  <div class="slice">
+						<div class="bar {{((lineInfo.PRODUCED/lineInfo.PRODUCTION_ORDERS)*100) >= 60 ? 'green':'red'}}-color"></div>
+						<div class="fill {{((lineInfo.PRODUCED/lineInfo.PRODUCTION_ORDERS)*100) >= 60 ? 'green':'red'}}-color"></div>
+					  </div>
+					</div>
+				</div>
+			</div>					
+		</div>
+		<div class="three columns box">
+			<h5>QC TREND <span class="u-pull-right orange-text xsmall cursor-pointer no-margin no-padding hover-gray" onclick="openNav('qc_trend')">view details</span></h5>
+			<!-- <h6 class="red-text sparkline-no-data" ng-show="!(qcDataSource.length)">No Data available...</h6> -->
+			<div class="row sparkline">					
+				<div id="chart_div2" class="chart" style="height:120px;position:relative;top:-35px"></div>
+			</div>
+			
+		</div>
+		<div class="three columns box">
+			<h5>QUALITY ISSUES <span class="u-pull-right orange-text xsmall cursor-pointer no-margin no-padding hover-gray" onclick="openNav('qc_defects')">view details</span></h5>
+			<p class="info-text" ng-repeat="lineInfo in lineData | filter: linen" ng-if="(lineInfo.QC_ISSUE).length">{{lineInfo.QC_ISSUE}}</p>
+			<h6 class="green-text" ng-repeat="lineInfo in lineData | filter: linen" ng-show="!(lineInfo.QC_ISSUE).length">No Quality Issues on current run...</h6>
+		</div>
+	</div>
+	<div class="bottom-content">
+	<div class="row">
+		<div class="nine columns left-section">
+			<h4 class="green-text">LINE SCHEDULE</h4>
+				<!-- no show -->
+					<div ng-show="loading" class="center-aligned" style="height: 300px;margin: 7% auto;">
+						<img src="./img/ajax-loader.gif" alt="Loading..."/>						
+					</div>
+				<!-- no show -->
+			<table class="table table-hover fixed-headers" ng-show="!loading">
+				<thead class="indigo-bg white-text">
+							<tr class="text-center">							
+								<th>Product</th>
+								<th>Customer</th>
+								<th>Order Number</th>
+								<th>No of Skids</th>
+								<th>Start - End</th>
+								<th>Print</th>
+							</tr>
+						</thead>
+				<tbody class="text-center" ng-if="(schedule | filter : linen).length">					
+					<tr ng-repeat="x in schedule | filter : linen" class="{{x.FLAG}}">
+						<td ng-click="populateJO(x)" class="jo-link text-dark order-number" data-toggle='modal' data-target='#jobOrderForm'>{{x.PRODUCT_ID}}
+							<span ng-if="x.UOM == 'CASE'" class="xsmall stacked info-text">{{x.BOXCODE}}</span>
+						</td>
+						<td ng-click="populateJO(x)" class="jo-link text-dark order-number" data-toggle='modal' data-target='#jobOrderForm'>{{x.CUSTOMERID}}
+							<span ng-if="x.CUSTOMERID.indexOf('ULIN') > -1" class="xsmall stacked info-text">{{ulCode(x.PRODUCT_ID)}}</span>
+						</td>
+						<td ng-click="populateJO(x)" class="jo-link text-dark order-number" data-toggle='modal' data-target='#jobOrderForm'>{{x.ORDER_NUMBER}}</td>
+						<td ng-click="populateJO(x)" class="jo-link text-dark order-number" data-toggle='modal' data-target='#jobOrderForm'>{{x.SKID_QTY}}</td>
+						<td ng-click="populateJO(x)" class="jo-link text-dark order-number" data-toggle='modal' data-target='#jobOrderForm'>{{x.START | date: 'MMM dd hh:mm a'}} - {{x.END | date: 'MMM dd hh:mm a'}}</td>
+						<td>
+							<button ng-hide="x.PRODUCT_ID.indexOf('-H-') > -1" ng-click="showCoreTagModal(x.PRODUCT_ID,x.SKID_QTY,x.CUSTOMERID,x.ORDER_NUMBER,x.OPEN_QTY)" class='button button-primary text-white core-tag-label {{x.UOM}} {{x.PRODUCT_ID.substr(0,4)}}'> Core Tag</button>
+							<button class="button button-info text-white barcode-tag label-tag" ng-click="printBC(x.SKID_IDS,x.PRODUCT_ID,x.SKID_QTY,false)">Barcode</button>
+							<button class="button button-gray skid-tag" ng-show="x.PRODUCT_ID.indexOf('VX-H') > -1 || (x.ITEM_CLASSIFICATION) == 'Standard Items' || x.CUSTOMERID == 'ULINEC' || x.CUSTOMERID == 'ULINE'" ng-click="printLabel(x.CUSTOMERNAME,x.PRODUCT_DESCRIPTION,x.SKID_QTY,x.OPEN_QTY,x.UOM,x.ORDER_PO_NUMBER,x.PRODUCT_ID,x.ORDER_NUMBER)">Skid Tag</button>
+						</td>
+					</tr>						
+				</tbody>
+			</table>				
+				
+			<h5 class="orange-text" ng-if="!(schedule | filter : linen).length && !loading">No data available...</h5>
+			<p class="small twelve columns right-aligned padding-right-15" ng-if="(schedule | filter : linen).length"> 
+					*** Note: Data are based from an external program and not guarantee the actual time running on each machine.
+			</p>
+		</div>
+			
+		<div class="three columns right-section">
+			<h4 class="green-text">PRODUCTION SUMMARY</h4>
+			<div class="row box margin-bottom-50">
+				<h5 class="no-data">No data available...</h5>
+				<div id="columnchart_values" style="position: relative;top:-5px;left:-40px"></div>
+			</div>
+			<div class="row box margin-top-25">
+			<h5 class="no-data">No data available...</h5>
+				<div id="chart_div_bar" style="position: relative;top:-25px;"></div>
+			</div>
+		</div>	
+			
+	</div>	
+  </div>
+  
+  <!-- The overlay -->
+<div id="qc_trend" class="overlay">
+
+  <!-- Button to close the overlay navigation -->
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('qc_trend')">&times;</a>
+	<h4 class="center-aligned padding-15">QC TREND</h4>
+  <!-- Overlay content -->
+  <div class="overlay-content">
+	<div class="w-90 padding-15">
+	
+	<div class="row">		
+		<div id="chart_div" style="position:relative;top:-100px;"></div>
+	</div>	
+	<div class="row">
+	 <table id="qc_table" class="white-bg table table-hover fixed-headers">
+		 <thead>
+			<tr>
+				<th class="center-aligned">TIMESTAMP</th>
+				<th class="center-aligned">LINE</th>
+				<th class="center-aligned">CUSTOMER</th>
+				<th class="center-aligned">PRODUCT</th>
+				<th class="center-aligned">ORD/PO #</th>
+				<th class="center-aligned">ROLL#</th>
+				<th class="center-aligned">SKID#</th>
+				<th class="center-aligned">TGT WT</th>
+				<th class="center-aligned">ACT WT</th>
+				<th class="center-aligned">ULIMATE</th>
+				<th class="center-aligned">CLING</th>
+				<th class="center-aligned">DEFECTS</th>
+				<th class="center-aligned">COMMENTS</th>
+				<th class="center-aligned">SHIFT</th>
+			</tr>
+		 </thead>
+		 <tbody>
+			<tr ng-repeat="d in qcData | filter : linen | orderBy:'Timestamp':true" class="border">
+				<td class="center-aligned">{{d.Timestamp | date : 'MMM dd yyyy hh:mm a'}}</td>
+				<td class="center-aligned">{{d.LINE}}</td>
+				<td>{{d.CUSTOMER}}</td>
+				<td>{{d.PRODUCT_CODE}}</td>
+				<td>{{d.ORD_PO}}</td>
+				<td class="center-aligned">{{d.SAMPLE_ROLL}}</td>
+				<td class="center-aligned">{{d.SKID_TOTALSKID}}</td>
+				<td class="center-aligned">{{d.TARGET_WT}}</td>
+				<td class="center-aligned">{{d.ACTUAL_WT}}</td>
+				<td class="center-aligned">{{d.BREAKPOINT}}</td>
+				<td class="center-aligned">{{d.CLING}}</td>
+				<!--<td class="center-aligned">{{d.OPACITY}}</td>-->
+				<td>{{d.DEFECTS}}</td>
+				<td>{{d.NOTE}}</td>
+				<td class="center-aligned">{{d.SHIFT}}</td>
+			</tr>		 
+		 </tbody>
+	 </table>
+	 </div>
+	</div>
+  </div>
+
+</div>
+<div id="qc_defects" class="overlay">
+
+  <!-- Button to close the overlay navigation -->
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav('qc_defects')">&times;</a>
+
+  <!-- Overlay content -->
+  <div class="overlay-content">
+	<div class="container">
+	   
+	<div id="chart_wrap" class="row margin-top-25">
+	<h4>QUALITY DEFECTS SUMMARY</h4>
+		<h6>From {{ weekAgo | date }} to {{ currentTime | date }}</h6>
+		<div id="piechart"></div>
+	</div>
+	</div>
+  </div>
+
+</div>
+<!-- The overlay -->
+  
+<!-- The Modal -->
+<div id="jobOrderModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close orange-text" onclick="closeModal('jobOrderModal')">&times;</span>
+    
+	<div class="job-order-form">
+	
+	<div class="row border padding-15">
+		<div class="two columns center-aligned">
+			<img src="./img/malpack-logo-black.png" alt="Malpack">
+		</div>
+		<div class="eight columns center-aligned">
+			<h4 class="no-margin" style="font-weight: 600;">LINE INSTRUCTIONS</h4>
+		</div>
+		<div class="two columns">			
+			<button class="button button-outline info-text">Print</button>
+		</div>
+	</div>
+	<div class="row border no-top-border">
+		<div class="six columns padding-15">
+			<label class="two columns">Line:</label>
+			<span class="ten columns">{{currentOrder.SCHEDULED_LINE}}</span>
+		</div>
+		<div class="six columns border-left padding-15">
+			<label class="two columns">Sold To:</label>
+			<span class="ten columns">{{currentOrder.CUSTOMERNAME}}</span>
+		</div>
+	</div>
+	<div class="row border no-top-border">
+		<div class="four columns padding-15">
+			<label class="six columns">Order Number:</label>
+			<span class="six columns">{{currentOrder.ORDER_NUMBER}}</span>
+		</div>
+		<div class="four columns border-left padding-15">
+			<label class="six columns">P.O. Number:</label>
+			<span class="six columns">{{currentOrder.ORDER_PO_NUMBER}}</span>
+		</div>
+		<div class="four columns border-left" style="min-height: 55px;">
+			<div class="row padding-left-15">
+				<label class="six columns">Order Date:</label>
+				<span class="six columns">{{currentOrder.ORDER_DATE | date : 'MMM dd yyyy'}}</span>
+			</div>
+			<div class="row padding-left-15">
+				<label class="six columns">Delivery Date:</label>
+				<span class="six columns">{{currentOrder.EXPECTED_DATE | date : 'MMM dd yyyy'}}</span>
+			</div>				
+		</div>
+	</div>
+	<div class="row border no-top-border">
+		<div class="three columns padding-15">
+			<label class="">Film Type:</label>
+			<span class="">{{filmType(currentOrder.PRODUCT_DESCRIPTION)}}</span>
+		</div>
+		<div class="three columns border-left padding-15" style="min-height: 80px;">
+			<label class="">Roll Config:</label>
+			<span class="">{{currentOrder.ROLL_CONFIG}}</span>
+		</div>
+		<div class="two columns border-left padding-15">			
+			<label class="">Width:</label>
+			<span class="">{{splitProduct(currentOrder.PRODUCT_ID,2)}} mm</span>
+		</div>
+		<div class="two columns border-left padding-15">
+			<label class="">Gauge:</label>
+			<span class="">{{splitProduct(currentOrder.PRODUCT_ID,3) | number:0}}G or {{splitProduct(currentOrder.PRODUCT_ID,3) / 3.93 | number:1}}mic</span>
+		</div>
+		<div class="two columns border-left padding-15">
+			<label class="">Length:</label>
+			<span class="">{{splitProduct(currentOrder.PRODUCT_ID,4) | number:0}} ft</span>
+		</div>	
+	</div>
+	<div class="row border no-top-border">
+		<div class="row padding-15">
+			<label class="two columns">Product Desc:</label>
+			<div class="ten columns">
+				<span class="stacked"><i><b>{{currentOrder.ITEMNUMBER}}</i></b></span>
+				<span class="stacked">{{currentOrder.PRODUCT_DESCRIPTION}}</span>
+			</div>
+		</div>
+		<div class="row padding-left-15 padding-bottom-15">
+			<label class="two columns">Product Code:</label>
+			<div class="ten columns">
+				<span>{{currentOrder.PRODUCT_ID}}</span>
+			</div>
+		</div>
+	</div>
+	<div class="row border no-top-border">
+		<div class="two columns padding-15" style="padding-right:0;">
+			<div class="row">
+				<label class="eight columns">{{currentOrder.UOM}}/Skid:</label>
+				<span class="four columns center-aligned">{{currentOrder.OPEN_QTY / currentOrder.SKID_QTY}}</span>
+			</div>
+			<div class="row">
+				<label class="eight columns">Total Skid:</label>
+				<span class="four columns center-aligned">{{currentOrder.SKID_QTY}}</span>
+			</div>	
+		</div>
+		<div class="four columns border-left padding-15">
+			<div class="row">
+				<label class="six columns">Pallet Size:</label>
+				<span class="six columns">{{currentOrder.PALLET_SIZE}}</span>
+			</div>
+			<div class="row">
+				<label class="six columns">Core Size:</label>
+				<span class="six columns">{{currentOrder.CORE_SIZE}}</span>
+			</div>	
+		</div>
+		<div class="four columns border-left padding-15">
+			<label class="">Box code/Hexacomb/Cradle:</label>
+			<input type="text" class="u-full-width no-border no-margin no-padding" value="{{currentOrder.BOXCODE}}" />
+		</div>
+		<div class="two columns border-left padding-15">			
+				<label class="">Roll Weight:</label>
+				<span class="s">{{currentOrder.ROLL_WT}} lbs</span>						
+		</div>
+	</div>
+	<div class="row border no-top-border">
+		<div class="six columns padding-15">
+			<label class="">Barcode/Skid Tag</label>
+		</div>
+		<div class="six columns border-left padding-15" style="margin-left:10px;">
+			<label class="">Core Tag</label>
+			<div class="container center-aligned" ng-show="currentOrder.UOM != 'CASE' && currentOrder.PRODUCT_ID.indexOf('VX-H') < 0 && currentOrder.PRODUCT_DESCRIPTION.indexOf('BULK') < 0">
+				<div class="coretag-label">
+					<div class="row coretag">{{coretag}}</div>
+					<div class="row madeInCanada">MADE IN CANADA</div>
+					<div class="row arrow-yr">
+						<img class="arrow" src="./img/arrow.png" alt="--> --> -->">
+						<span class="year">{{yr}}</span>
+					</div>
+					<div class="row ulineCode">{{ulinetag}}</div>
+					<div class="row orderNumber">{{currentOrder.ORDER_NUMBER}}{{((currentOrder.PRODUCT_ID.split("-")[5]).indexOf('00') > -1 || (currentOrder.PRODUCT_ID.split("-")[5]).indexOf('Q0') > -1 || (currentOrder.PRODUCT_ID.split("-")[5]).indexOf('C0') > -1 || (currentOrder.PRODUCT_ID.split("-")[5]).indexOf('P0') > -1 || (currentOrder.PRODUCT_ID.split("-")[5]).indexOf('N0') > -1) ? "" : currentOrder.PRODUCT_ID.split("-")[5]}}</div>
+					<div class="row shift">{{currentTime | date: 'HH:MM:ss a'}} {{(user.split("/")[1]).replace("Shift ","") + "00" + linen.replace("LINE ","")}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row border no-top-border padding-15">
+		<label class="">Product Recipe:</label>
+		<div class="recipe"></div>
+	</div>
+	<div class="row border no-top-border">
+		<div class="six columns padding-15" style="border-right: 1px #000 solid;width: 51%;min-height:142px;">
+			<label class="">Customer Requirements</label>
+			<p class="p">{{currentOrder.SPECIAL_COMMENT}}</p>
+		</div>
+		<div class="six columns padding-15 no-margin">
+			<label class="">Quality Alerts</label>
+			<textarea class="form-control-plaintext pl-3" >{{currentOrder.QUALITY_ALLERT}}</textarea>
+		</div>
+	</div>
+	<div class="row border no-top-border">
+		<div class="six columns padding-15" style="border-right: 1px #000 solid;width: 51%;">
+			<label class="">Comments</label>
+			<textarea class="form-control-plaintext pl-3" >{{currentOrder.NOTE}}</textarea>
+		</div>
+		<div class="six columns padding-15 no-margin">
+			<label class="">Supervisor/Operator Name:</label>
+			<input type="text" class="u-full-width no-border no-margin no-padding" value="{{user}}" />
+		</div>
+	</div>
+	
+	
+<h6 class="u-pull-right"><b>WI - 000</b></h6>
+</div>	
+  </div>
+</div><!--JOBORDER-->
+<!-- coretag modal -->
+<div id="coreTagPrint" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-20">
+    <div class="modal-header white-bg">
+      <span class="close indigo-text" onclick="closeModal('coreTagPrint')" style="margin-top: -32px;left: 0;position: relative;">&times;</span>
+	   <h4 class="info-text">Print Core Tags</h4>     
+    </div>
+    <div class="modal-body center-aligned" id="coretag">
+		<p class="row left-aligned no-margin">No. Of Copies: </p>
+		<div class="row">						
+			<input type="text" class="seven columns noOfC border rounded-0 w-50" value="{{noOfPrints}}"/>
+			<button type="button" class="five columns button button-primary printCopies" ng-click="printCoreTagLabel(coretag,ulinetag,orderCode,noOfPrints,linen,isUline)">PRINT</button>
+		</div>
+		<div class="coretag-label" style="margin: 25px auto;">
+			<div class="row coretag">{{coretag}}</div>
+			<div class="row madeInCanada">MADE IN CANADA</div>
+			<div class="row arrow-yr">
+				<img class="arrow" src="./img/arrow.png" alt="--> --> -->">
+				<span class="year">{{yr}}</span>
+			</div>
+			<div class="row ulineCode">{{ulinetag}}</div>
+			<div class="row orderNumber">{{orderCode}}</div>
+			<div class="row shift">{{currentTime | date: 'HH:MM:ss a'}} {{(user.split("/")[1]).replace("Shift ","") + "00" + linenumber.replace("LINE ","")}}</div>
+		</div>				
+    </div> 
+  </div>
+</div>
+<!-- skidtag modal -->
+<div id="skidTagPrint" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-30">
+    <div class="modal-header white-bg border-bottom">
+      <span class="close gray-text" onclick="closeModal('skidTagPrint')">&times;</span>
+      <h4 class="info-text">Print Skid Tag</h4>
+    </div>
+   
+    <div class="modal-body section align-center" id="skidtag" style="text-align:center;">		
+		<div class="form-inline section">					
+			<div class="form-group bc-form">
+				<!-- <span class="row ">Barcode:</span> -->
+				<input type="text" class="skidIdFrom border w-40" placeholder="Barcode from" value="" ng-model="skididfrom"/>
+				<input type="text" class="skidIdTo border w-40" placeholder="Barcode to" value="" ng-model="skididto"/>
+				<button type="button" class="button button-primary printSkidTags" ng-click="printBarcodeOverwrite(skididfrom,skididto,productId)">Print</button>
+			</div>
+		</div>
+    </div>        
+  </div>
+</div>
+
+<div id="printLabelBarcode" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-30">
+    <div class="modal-header white-bg border-bottom">
+      <span class="close green-text" onclick="closeModal('printLabelBarcode')">&times;</span>
+      <h4 class="info-text">Print Barcode</h4>
+    </div>
+   
+    <div class="modal-body section align-center" id="skidtag">		
+		<div class="form-inline section">					
+			<div class="form-group bc-form">
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Product Code:</p>
+					<input type="text" class="nine columns border w-100 prodid reset" placeholder="ie: VX-H-330-LGT-600M-Q126" value="" ng-model="prodC"/>
+				</div>
+				<div class="row">
+					<input type="text" class="five columns skidIdFrom border w-100 reset" placeholder="Barcode from" value="" ng-model="skidfrom"/>
+					<input type="text" class="five columns skidIdTo border w-100 reset" placeholder="Barcode to" value="" ng-model="skidto"/>
+					<button type="button" class="two columns button button-primary printSkidTags" ng-click="printBarcodeOverwrite(skidfrom,skidto,prodC)">Print</button>
+				</div>				
+			</div>
+		</div>
+    </div>        
+  </div>
+</div>
+
+<div id="printLabelTags" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-30">
+    <div class="modal-header white-bg border-bottom">
+      <span class="close green-text" onclick="closeModal('printLabelTags')">&times;</span>
+      <h4 class="info-text">Print SkidTags</h4>
+    </div>
+   
+    <div class="modal-body section align-center" id="skidtag">		
+		<div class="form-inline section">					
+			<div class="form-group bc-form">
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Product Code:</p>
+					<datalist id="productList">					
+					</datalist>
+					<input type="text" class="nine columns border w-100 reset" placeholder="ie: VX-H-330-LGT-600M-Q126" value="" list="productList" ng-model="selected"/>					
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Customer Name:</p>
+					<input type="text" class="nine columns border w-100 reset" placeholder="ie: STOCK PRODUCTION RUN" value="" ng-model="custname"/>
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">{{((selected.toUpperCase().substring(0,4) == "VX-H") || (custname.toLowerCase() == "uline" || custname.toLowerCase() == "uline canada")) ? "Order Number:" : "PO Number:"}}</p>
+					<input type="text" class="nine columns border w-100 reset" placeholder="" value="" ng-model="po"/>
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">No of Skids:</p>
+					<input type="text" class="nine columns border w-100 reset" placeholder="" value="" ng-model="skidQty"/>
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Production QTY:</p>
+					<input type="text" class="five columns border w-100 reset" placeholder="" value="" ng-model="prodQty"/>	
+					<select ng-model="rollOrCase" class="four columns no-border w-100 reset">
+						<option value="">Unit</option>
+						<option value="ROLL">Rolls</option>
+						<option value="CASE">Cases</option>
+					</select>					
+				</div>
+				<div class="row center-aligned margin-top-25">					
+					<button type="button" class="two columns button button-primary printSkidTags" ng-click="printLabel(custname,'',skidQty,prodQty,rollOrCase,po,selected)">Print</button>
+				</div>				
+			</div>
+		</div>
+    </div>        
+  </div>
+</div>
+
+<div id="printLabelCoretag" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-30">
+    <div class="modal-header white-bg border-bottom">
+      <span class="close green-text" onclick="closeModal('printLabelCoretag')">&times;</span>
+      <h4 class="info-text">Print CoreTags</h4>
+    </div>
+   
+    <div class="modal-body section align-center" id="skidtag">		
+		<div class="form-inline section">					
+			<div class="form-group">
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Line:</p>
+					<select class="nine columns reset border w-100" ng-model="lineNumber">
+						<option value="">Select Line</option>
+						<option ng-repeat="line in machineLine" value="{{line}}">{{line}}</option>
+					</select>
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Product Code:</p>
+					<datalist id="productList">					
+					</datalist>
+					<input type="text" class="nine columns border w-100 reset" placeholder="ie: VX-H-330-LGT-600M-Q126" value="" list="productList" ng-model="prod_id"/>					
+				</div>				
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Order Number:</p>
+					<input type="text" class="nine columns border w-100 reset" placeholder="" value="" ng-model="ordnum"/>
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Total Skids:</p>
+					<input type="text" class="nine columns border w-100 reset" placeholder="" value="" ng-model="totalSkid"/>
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">No. of Prints:</p>
+					<input type="text" class="nine columns border w-100 reset" placeholder="" value="" ng-model="noOfPrint"/>									
+				</div>
+				<div class="left-aligned row">
+					<p class="three columns orange-text">Is ULINE?</p>
+					<div class="nine columns">
+						<label class="switch">
+						  <input type="checkbox" id="isUline" class="reset">
+						  <span class="slider round" onclick="toggleswitch()"></span>
+						</label>
+					</div>
+				</div>
+				<div class="row center-aligned margin-top-25">					
+					<button type="button" class="w-50 large button button-primary printSkidTags" ng-click="printLabelCTag(prod_id,ordnum,totalSkid,noOfPrint,lineNumber)">Print</button>
+				</div>				
+			</div>
+		</div>
+    </div>        
+  </div>
+</div>
+
+<!-- customer return -->
+<div id="customerReturn" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-65">
+    <div class="modal-header white-bg row">
+      <span class="close orange-text" onclick="closeModal('customerReturn')" style="right: 17%;top: 4%;">&times;</span>      
+    </div>
+    <div class="modal-body margin-top-20 margin-bottom-20">
+		<div class="row hide" id="axis" style="display:none;">
+			<div class="six columns">
+				<iframe width="606" height="354.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=1033035492&amp;format=interactive"></iframe>
+			</div>
+			<div class="six columns">
+				<iframe width="606" height="354.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=506774261&amp;format=interactive"></iframe>
+			</div>
+		</div>
+		<div class="row hide" id="platinum" style="display:none;">
+			<div class="six columns">
+				<iframe width="606" height="354.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=84542193&amp;format=interactive"></iframe>
+			</div>
+			<div class="six columns">
+				<iframe width="606" height="354.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=265024198&amp;format=interactive"></iframe>
+			</div>
+		</div>
+		<div class="row hide" id="promax" style="display:none;">
+			<div class="six columns">
+				<iframe width="606" height="359.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=532963860&amp;format=interactive"></iframe>
+			</div>
+			<div class="six columns">
+				<iframe width="606" height="359.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=23153736&amp;format=interactive"></iframe>
+			</div>
+		</div>
+		<div class="row hide" id="stretchmax" style="display:none;">
+			<div class="six columns">
+				<iframe width="606" height="354.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=1958041216&amp;format=interactive"></iframe>
+			</div>
+			<div class="six columns">
+				<iframe width="606" height="354.5" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIO7bOkeMyaXYY26ckiR6uZaWLAnj-aYODP5hpB27zTjlrcX1wUF2WYzB0Vbt0fcAg6Jymog5ID5q/pubchart?oid=973240834&amp;format=interactive"></iframe>
+			</div>
+		</div>
+    </div>    
+  </div>
+</div>
+<!-- customer return -->
+<!-- dailyChecklistForm -->
+<div id="dailyChecklistForm" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-40 no-padding">
+    <div class="modal-header indigo-bg padding-15">
+      <span class="close white-text" onclick="closeModal('dailyChecklistForm')" style="margin-top: -12px;left: 0;position: relative;">&times;</span>
+      <h4 class="white-text">Daily Operator Checklist</h4>
+    </div>
+    <div class="modal-body margin-top-25 margin-bottom-25 padding-15" id="dailyChecklist">
+		<form id="dailyChecklistForm" method="get" action="">
+			<select name="line" id="lineDropdown" class="white-bg w-100">
+				<option value="">Select Line</option>
+				<option value="LINE 1">LINE 1</option>
+				<option value="LINE 2">LINE 2</option>
+				<option value="LINE 3">LINE 3</option>
+				<option value="LINE 4">LINE 4</option>
+				<option value="LINE 5">LINE 5</option>
+				<option value="LINE 6">LINE 6</option>
+				<option value="LINE 7">LINE 7</option>
+				<option value="LINE 8">LINE 8</option>
+				<option value="LINE 9">LINE 9</option>
+			</select>
+			<div>
+								
+				<label for="question6" class="stacked">					
+					<input type="checkbox" name="question6" value="die/lip & cast roll cleaning">
+					Die/lip & cast roll unit cleaning
+				</label>
+				<label class="question6">
+					<input type="radio" id="scheduled" name="question6a" value="Scheduled" /><span onclick="checkedRadio('scheduled')">Scheduled</span>
+					<input type="radio" id="qualityIssue" name="question6a" value="Quality Issue"/><span onclick="checkedRadio('qualityIssue')">Quality Issue</span>
+				</label>
+				<label for="question7" class="stacked">
+					<input type="checkbox" name="question7" value="changed screen">
+					Changed Screen
+				</label>
+				<label for="question8" class="stacked">
+					<input type="checkbox" name="question8" value="changed blades">
+					Changed Blades
+				</label>
+				<label class="question8">
+					<input type="radio" name="question8a" value="Flipped" id="flipped"/><span onclick="checkedRadio('flipped')">Flipped</span>
+					<input type="radio" name="question8a" value="New Blades" id="newBlades"/><span onclick="checkedRadio('newBlades')">New Blades</span>
+				</label>
+				<label for="question9" class="stacked">
+					<input type="checkbox" name="question9" value="gtp/grinder cleaning">
+					GTP/Grinder Cleaning
+				</label>				
+				<br>
+				<h6>Comments: <span class="small-text info-text"><i>(Health & Safety/Maintenance/Production/People)</i></span></h6>
+				<div class="margin-top-15 margin-bottom-20">
+					<textarea style="height: 200px;" rows="7" name="comment" class="border border-gray" placeholder="Comment:"></textarea>
+				</div>
+				<div class="margin-top-15 margin-bottom-20">
+					<input type="text" name="submitby" placeholder="Operator/Assistant Operator" class="w-100 border border-gray"/>
+					<input type="hidden" name="shift" value='{{user.split("/")[1]}}'/>
+				</div>
+				<div class="center-aligned" style="margin-top:35px;">
+					<input type="submit" class="button button-primary dailyChecklistFormSubmit w-30" value="Submit">
+				</div>
+				<!--<span class="orange-text small text-bold">**Please note: Line 7 will be shut down at 7:30am every friday for preventative maintenance/cleaning.</span>-->
+				<div class="error-alert-checklist">
+					<p class="show-success-msg green-text" style="display:none;">Checklist successfully submitted.</p>
+					<p class="show-error-msg orange-text" style="display:none;">Ooppss.. Something went wrong. Please try again.</p>
+				</div>
+			</div>
+			
+		</form>
+    </div>    
+  </div>
+</div>
+<!-- dailyChecklistForm -->
+<!--dailyChecklistReport-->
+<div id="dailyChecklistReport" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-75">
+    <div class="modal-header green-bg">
+      <span class="close orange-text" onclick="closeModal('dailyChecklistReport')" style="margin-top: -19px;left: 19px;position: relative;">&times;</span>
+      <h5 class="green-text">Daily Operator Checklist Report</h5>
+    </div>
+    <div class="modal-body margin-top-25 margin-bottom-25" id="dailyChecklistReport">
+		<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSlwEB6p6xpIB5jGS3VA_P4yU9aZYnnVKh-wJNMLyioj110uZwEOdXBcU-oPBLTIY2EhalKvv-uRFuD/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false" width="1400px" height="450px"></iframe>
+    </div>    
+  </div>
+</div>
+<!--dailyChecklistReport-->
+<!-- show messages -->
+<div id="showMessage" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-20 no-padding">
+    <div class="modal-header red-bg">
+      <span class="close white-text" onclick="closeModal('showMessage')" style="margin-top: -32px;left: 30px;position: relative;">&times;</span>
+      <h5 class="white-text fromUser no-margin padding-15 right-aligned" id="fromUser"></h5>
+    </div>
+    <div class="modal-body margin-top-20 margin-bottom-20 padding-15" id="messagebody"></div>    
+  </div>
+</div>
+<!-- messages modal -->
+<div id="sendMessageForm" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content w-20 no-padding">
+    <div class="modal-header red-bg padding-15">
+      <span class="close white-text" onclick="closeModal('sendMessageForm')" style="margin-top: -12px;left: 0;position: relative;">&times;</span>
+      <h4 class="white-text no-margin">Send Message</h4>
+    </div>
+    <div class="modal-body margin-top-20 margin-bottom-20 padding-15">
+		<form id="MessageForm" class="form-group padding-bottom-15" method="get" action="">
+			<div class="">
+				<input type="hidden" name="Operator" value="{{user}}"/>
+				<label>Message: </label>
+				<textarea style="height: 200px;" rows="7" name="Message" ng-model="addMe" class="form-control border"></textarea>
+				<input type="submit" class="sendMsg button button-green margin-top-15 margin-bottom-15 float-right" ng-click="addMessage()" value="Send Message"/>
+				<p class="text-warning h6" ng-show="{{errortext != ''}}">{{errortext}}</p>
+			</div>
+		</form>
+    </div>    
+  </div>
+</div>
+
+<div id="printSkids" style="display:none;"></div>
+<div id="printLabel" style="display:none;"></div>
+<!-- The Modal -->
+  
+  
+ </div> 
+	
+	<script type="text/javascript" src="./js/jquery-3.3.1.min.js"></script>
+	<script src="./js/angular.min.js"></script>	
+	<script type="text/javascript" src="./js/codes.js"></script>
+	<script type="text/javascript" src="./js/coretag.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="./js/BrowserPrint-2.0.0.75.min.js"></script>
+	<script src="./js/zebraprint.js"></script>
+	<script src="./js/JsBarcode.all.min.js"></script>
+	<script type="text/javascript" src="./js/finleyApp.js"></script>
+	<script type="text/javascript" src="./js/chartApp.js"></script>
+	<script type="text/javascript" src="./js/label-print-app.js"></script>
+	<script>
+	var logOff = function(){
+	
+		var hour = new Date().getHours();		
+		var minutes = new Date().getMinutes();
+		if((hour == 7 && minutes == 0) || (hour == 19 && minutes == 0)) {
+			$('.sign-out').trigger('click');
+		} 
+	};
+		
+	$(document).ready(function(){
+		 $('.sign-out').on('click',function(){
+			//ipc.sendSync('entry-accepted', '');
+			localStorage.shift = "";
+			window.open('login.html','_self');
+		 });
+		
+		setInterval(logOff,60000);
+		//clearInterval(logOff);		
+	
+	});
+	
+	</script>
+</body>
+</html>
