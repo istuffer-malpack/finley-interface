@@ -5,7 +5,7 @@
     "scope": "/finley-interface/",
     "display": "standalone",
     "start_url": "http://istuffer-malpack.github.io/finley-interface/finley-interface/login.html",
-    "short_name": "Production | Ma",
+    "short_name": "Malpack",
     "theme_color": "transparent",
     "description": "Malpack Production Interface",
     "orientation": "any",
