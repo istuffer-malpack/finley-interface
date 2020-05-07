@@ -242,7 +242,15 @@ app.directive('autoComplete', function($timeout) {
 									
 				if(skidnumber.length > 0){
 					
-					printBarcode(skidnumber,prodid,qty);
+					var skidIdFrom = skidnumber.split(",")[0];
+					var skidIdTo = skidnumber.split(",")[(skidnumber.split(",")).length - 1];
+					var txt;
+					var r = confirm("The following barcodes from "+ skidIdFrom + " to "+ skidIdTo +" will be printed. \nPress OK to confirm.");
+					if (r == true) {
+					  printBarcode(skidnumber,prodid,qty);
+					} else {
+					  txt = "You pressed Cancel!";
+					}
 					
 				}else{
 					
