@@ -68,6 +68,8 @@ app.directive('autoComplete', function($timeout) {
 			$scope.noOfPrints;
 			$scope.linenumber;
 			$scope.isUline;
+			$scope.skidIdFrom;
+			$scope.skidIdTo;
 		
 			$scope.getOrders = function(){
 				overviewService.getAllOrders().then(
@@ -158,7 +160,10 @@ app.directive('autoComplete', function($timeout) {
 					
 			$interval(function() {$scope.getOrders();}, 60 * 1000); 
 			$interval(function() {
-				$scope.getQC();
+				$scope.getQC();				
+				$scope.getDefectData();
+				$scope.getLineInfo();
+				$scope.summaryByProduct();
 				drawChart2();drawChart();
 			}, 5 * 60 * 1000); 
 				
@@ -240,8 +245,7 @@ app.directive('autoComplete', function($timeout) {
 			
 			$scope.printBC = function(skidnumber,prodid,qty){			
 									
-				if(skidnumber.length > 0){
-					
+				if(skidnumber.length > 0){					
 					var skidIdFrom = skidnumber.split(",")[0];
 					var skidIdTo = skidnumber.split(",")[(skidnumber.split(",")).length - 1];
 					var txt;
@@ -250,36 +254,49 @@ app.directive('autoComplete', function($timeout) {
 					  printBarcode(skidnumber,prodid,qty);
 					} else {
 					  txt = "You pressed Cancel!";
-					}
+					}					
 					
-				}else{
-					
+				}else{					
 					$scope.productId = prodid;
 					var modal = document.getElementById('skidTagPrint');
 					$('.bc-form input').val('');
 					modal.style.display = "block";					
-				}		
+				}
 			
 			};
 			
 			
-			$scope.printBarcodeOverwrite = function(idfrom,idto,prodid){
+			$scope.printBarcodeOverwrite = function(skidnumbers,prodid){
 				
-				if(idfrom == undefined && idto == undefined){
+				if(skidnumbers == undefined || skidnumbers == ''){
 					alert('Please enter barcode ids to print...');
 					
-				}else{
-					var count = (parseInt(idto) - parseInt(idfrom)) + 1;
-					var start = parseInt(idfrom);
-					var skidnumber = new Array();
-					for(var i=0;i<count;i++){
+				}else{								
+													
+						var skidIDS = new Array();
+						var skidnumberArray = skidnumbers.split(';');				
 						
-						skidnumber.push(start + i);
-					}			
-					
-					//console.log(skidnumber.join(','));
-					printBarcode(skidnumber.join(','),prodid,count);
-				}				
+							for(var i=0;i<skidnumberArray.length;i++){							
+								
+								if(skidnumberArray[i].indexOf('-') > -1){
+									
+									var skidWithDash = skidnumberArray[i].split('-');						
+									var count = (parseInt(skidWithDash[1]) - parseInt(skidWithDash[0])) + 1;
+									var start = parseInt(skidWithDash[0]);
+									
+									for(var j=0;j<count;j++){							
+										skidIDS.push(start + j);
+									}			
+									
+								}else{								
+									skidIDS.push(parseInt(skidnumberArray[i]));								
+								}						
+							}
+							//console.log(skidIDS.join(','));
+							var skidIDdta = (skidIDS.length == 1) ? skidIDS.toString() : skidIDS.join(',');
+							printBarcode(skidIDdta,prodid,skidIDS.length);
+						
+				}
 			};
 			
 			
