@@ -271,10 +271,13 @@ app.directive('autoComplete', function($timeout) {
 				if(skidnumbers == undefined || skidnumbers == ''){
 					alert('Please enter barcode ids to print...');
 					
-				}else{								
-													
-						var skidIDS = new Array();
-						var skidnumberArray = skidnumbers.split(';');				
+				}else{					
+						
+					var skidIDS = new Array();
+					
+						if(skidnumbers.length >= 7 && (skidnumbers.indexOf(';') > -1 || skidnumbers.indexOf('-') > -1)){
+							
+							var skidnumberArray = skidnumbers.split(';');				
 						
 							for(var i=0;i<skidnumberArray.length;i++){							
 								
@@ -292,9 +295,16 @@ app.directive('autoComplete', function($timeout) {
 									skidIDS.push(parseInt(skidnumberArray[i]));								
 								}						
 							}
+						
 							//console.log(skidIDS.join(','));
 							var skidIDdta = (skidIDS.length == 1) ? skidIDS.toString() : skidIDS.join(',');
+							//console.log(skidIDdta+'-'+prodid);
 							printBarcode(skidIDdta,prodid,skidIDS.length);
+							
+						}else{
+							alert("Please check Barcode IDs entered. Must be separated by a (;) or (-) for multiple/sequence ids.");
+							
+						}	
 						
 				}
 			};
