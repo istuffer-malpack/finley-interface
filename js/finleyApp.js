@@ -260,8 +260,6 @@ app.directive('autoComplete', function($timeout) {
 					$scope.productId = prodid;
 					var modal = document.getElementById('skidTagPrint');
 					$('.bc-form input').val('');
-					$('#printLabelBarcode .bc-form p.nine.columns').html('Enter multiple/skipping Barcode IDs with a dash <b class="red-text">(-)</b> and/or semicolon <b class="red-text">(;)</b>. <span class="stacked"><b style="color:teal;font-weight: bold;">0000001-0000008;0000011;0000022-0000025</b></span>');
-					$('#skidTagPrint .bc-form p.nine.columns').html('Enter multiple/skipping Barcode IDs with a dash <b class="red-text">(-)</b> and/or semicolon <b class="red-text">(;)</b>. <span class="stacked"><b style="color:teal;font-weight: bold;">0000001-0000008;0000011;0000022-0000025</b></span>');
 					modal.style.display = "block";					
 				}
 			
@@ -613,8 +611,9 @@ app.directive('autoComplete', function($timeout) {
 		$scope.errortext = "";
 		$scope.messages.splice(x, 1);
 	   };
-			
-			
+		
+		$('#printLabelBarcode .bc-form p.nine.columns').html('Enter multiple/skipping Barcode IDs with a dash <b class="red-text">(-)</b> and/or semicolon <b class="red-text">(;)</b>. <span class="stacked"><b style="color:teal;font-weight: bold;">0000001-0000008;0000011;0000022-0000025</b></span>');
+		$('#skidTagPrint .bc-form p.nine.columns').html('Enter multiple/skipping Barcode IDs with a dash <b class="red-text">(-)</b> and/or semicolon <b class="red-text">(;)</b>. <span class="stacked"><b style="color:teal;font-weight: bold;">0000001-0000008;0000011;0000022-0000025</b></span>');
 	  };
 	  init();
 	}	
