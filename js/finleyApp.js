@@ -215,7 +215,7 @@ app.directive('autoComplete', function($timeout) {
 				var suffix = ((prodID.split("-")[5]).indexOf('00') > -1 || (prodID.split("-")[5]).indexOf('Q0') > -1 || (prodID.split("-")[5]).indexOf('C0') > -1 || (prodID.split("-")[5]).indexOf('P0') > -1 || (prodID.split("-")[5]).indexOf('N0') > -1) ? "" : prodID.split("-")[5]
 				
 				$scope.orderCode = "ORD"+ordernum.toString().toLowerCase().replace("ord","") +""+suffix;
-				$scope.noOfPrints = nPrints;
+				$scope.noOfPrints = nPrints + 20;
 				$scope.linenumber = (lineNumber == undefined) ? $scope.linen : lineNumber;
 				
 				var modal = document.getElementById("coreTagPrint");
@@ -226,7 +226,8 @@ app.directive('autoComplete', function($timeout) {
 			$scope.printCoreTagLabel = function(coretag,ulinetag,orderCode,noOfPrints,linenum,isUline){
 				var shiftTag = $scope.currentTime.toLocaleTimeString() + ' ' + ((localStorage.shift).split("/")[1]).replace("Shift ","") + '00' + linenum.replace("LINE ","");
 				//writeToSelectedPrinter(coretag,order,shift,noOfCopies,prodid,cust){
-				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints,isUline);
+				var finalCopies = noOfPrints - 20;
+				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,finalCopies,isUline);
 			};
 			
 			$scope.printLabelCTag = function(prod_id,ordnum,totalSkid,noOfPrint,lineNumber){
