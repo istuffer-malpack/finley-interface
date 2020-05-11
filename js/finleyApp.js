@@ -226,8 +226,7 @@ app.directive('autoComplete', function($timeout) {
 			$scope.printCoreTagLabel = function(coretag,ulinetag,orderCode,noOfPrints,linenum,isUline){
 				var shiftTag = $scope.currentTime.toLocaleTimeString() + ' ' + ((localStorage.shift).split("/")[1]).replace("Shift ","") + '00' + linenum.replace("LINE ","");
 				//writeToSelectedPrinter(coretag,order,shift,noOfCopies,prodid,cust){
-				var finalCopies = noOfPrints - 20;
-				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,finalCopies,isUline);
+				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints - 20,isUline);
 			};
 			
 			$scope.printLabelCTag = function(prod_id,ordnum,totalSkid,noOfPrint,lineNumber){
@@ -272,13 +271,10 @@ app.directive('autoComplete', function($timeout) {
 				if(skidnumbers == undefined || skidnumbers == ''){
 					alert('Please enter barcode ids to print...');
 					
-				}else{					
-						
-					var skidIDS = new Array();
-					
-						if(skidnumbers.length >= 7 && (skidnumbers.indexOf(';') > -1 || skidnumbers.indexOf('-') > -1)){
-							
-							var skidnumberArray = skidnumbers.split(';');				
+				}else{								
+													
+						var skidIDS = new Array();
+						var skidnumberArray = skidnumbers.split(';');				
 						
 							for(var i=0;i<skidnumberArray.length;i++){							
 								
@@ -296,16 +292,9 @@ app.directive('autoComplete', function($timeout) {
 									skidIDS.push(parseInt(skidnumberArray[i]));								
 								}						
 							}
-						
 							//console.log(skidIDS.join(','));
 							var skidIDdta = (skidIDS.length == 1) ? skidIDS.toString() : skidIDS.join(',');
-							//console.log(skidIDdta+'-'+prodid);
 							printBarcode(skidIDdta,prodid,skidIDS.length);
-							
-						}else{
-							alert("Please check Barcode IDs entered. Must be separated by a (;) or (-) for multiple/sequence ids.");
-							
-						}	
 						
 				}
 			};
@@ -612,9 +601,8 @@ app.directive('autoComplete', function($timeout) {
 		$scope.errortext = "";
 		$scope.messages.splice(x, 1);
 	   };
-		
-		$('#printLabelBarcode .bc-form p.nine.columns').html('Enter multiple/skipping Barcode IDs with a dash <b class="red-text">(-)</b> and/or semicolon <b class="red-text">(;)</b>. <span class="stacked"><b style="color:teal;font-weight: bold;">0000001-0000008;0000011;0000022-0000025</b></span>');
-		$('#skidTagPrint .bc-form p.nine.columns').html('Enter multiple/skipping Barcode IDs with a dash <b class="red-text">(-)</b> and/or semicolon <b class="red-text">(;)</b>. <span class="stacked"><b style="color:teal;font-weight: bold;">0000001-0000008;0000011;0000022-0000025</b></span>');
+			
+			
 	  };
 	  init();
 	}	
@@ -636,7 +624,7 @@ function printBarcode(skidnumber,prodid,qty){
 							'</p>'+
 							'<img class="barcode'+skidIDs[i]+' barcode" style="display:block;margin:0 auto;width:110%;position:relative;top:-8px;"/>'+
 							'<p style="width:100%;text-align:center;margin: 10px 0 0 50px;color: #000;font-size: 32px;line-height: 1.25rem;font-family: arial;font-weight: 400;">MADE IN CANADA</p>'+
-							'<p style="width:100%;text-align:right;margin-top:230px;color: #000;font-size:40px;font-family: arial;font-weight:700;margin-bottom:0;">'+
+							'<p style="width:100%;text-align:right;margin-top:180px;color: #000;font-size:40px;font-family: arial;font-weight:700;margin-bottom:0;padding-bottom:30px;">'+
 								(i + 1)+' of '+ qty +'</p>'+
 							'</div>';				  
 								
@@ -682,13 +670,13 @@ jQuery.fn.extend({
     style = document.createElement('style');
 	 
 	 if(a == 'skidTags'){ 
-		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{width:920px;height: 620px;}';
+		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{width:920px;height: 600px;}';
 	 }else if(a == 'skidLabel'){
 		 css = '@page { size: 11in 8.5in;margin:10mm 15mm;}body{width:980px;height: auto;color:#000;font-family:"Times New Roman"!important;}'+
 				'.container *{margin:0;padding:0;}.container{width:100%;font-weight:600;text-align:center;padding:15px 0 0;margin:0;page-break-inside:avoid;}'+
 				'.costumer{margin-bottom: 25px;}h1{font-size:72px;line-height:1.1;text-transform:uppercase;font-weight:700;margin-top:15px;}'+
 				'.product p{font-size:80px;line-height:1.1;margin-bottom: 30px;}.po{font-size:65px;}.made{position:relative;}.qty{font-size: 60px;line-height:1.1;margin-top:25px;}'+
-				'.made .madeincanada{font-size: 36px;margin-top:-15px;}.made .counter{position:absolute;right: -45px;top: 50px;}.counter.down{top:100px;}'+
+				'.made .madeincanada{font-size: 36px;margin-top:-15px;}.made .counter{position:absolute;right: -45px;top: 50px;}.counter.down{top:100px;margin-bottom:20px;}'+
 				'.lot-box{position:absolute; left:0;top:50px;padding:10px; text-align:center; border-style: double; }.lot-box.middle{position:relative;top:-20px;margin: 15px auto 0;width: 250px;}.lot-box.middle.no-lot-box{display:none;}'+
 				'.h2{font-size:55px;font-weight:700;margin:0}h5{font-weight:700;font-size: 1.5em;}h4{font-weight:700;font-size:1.75em;margin:10px;}h5 span{padding-left:10px}'+
 				'.product-logo{padding-top:0px}.product-logo img{height:120px;width:90%;display:block;margin:-15px auto 5px}'+
