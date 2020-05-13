@@ -180,8 +180,8 @@ function drawChart2() {
 		title: '',
 		hAxis: {title: '', textStyle: { color: '#000000', fontSize: 5  },gridlines: {    color: 'transparent'  },slantedText:true,slantedTextAngle:45,},
 		vAxis: {minValue: 0,textStyle: { color: '#000000'  },gridlines: {    color: 'transparent'  },viewWindow: {
-					min: minval,
-					max: maxval
+					min: minval - 50,
+					max: maxval + 50
 				},			
 			},
 		legend: { position: "bottom",textStyle: { color: '#ffffff'  } },
@@ -204,7 +204,7 @@ function drawChart2() {
 				minValue: 0,
 				textStyle: { color: '#000000'  },
 				gridlines: { color: 'transparent'  },
-				viewWindow:{ min: minval, max: maxval }
+				viewWindow:{ min: minval - 50, max: maxval + 50 }
 			},
 		legend: { position: "bottom",textStyle: { color: '#ffffff'  } },
 		backgroundColor: {fill: '#000000',fillOpacity: 1},
