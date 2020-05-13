@@ -208,14 +208,15 @@ app.directive('autoComplete', function($timeout) {
 			};
 			
 			$scope.showCoreTagModal = function(prodID,qty,custid,ordernum,nPrints,lineNumber){
-		
+				prodID = prodID.toUpperCase();
+				custid = custid.toUpperCase();
 				$scope.coretag = (custid == "ULINEC" || custid == "ULINE") ? ulineCode[prodID] : getCoreTag(prodID,qty);
 				$scope.ulinetag = (custid == "ULINEC" || custid == "ULINE") ? getCoreTag(prodID,qty) : "";				
 				$scope.isUline = (custid == "ULINEC" || custid == "ULINE") ? true : false;
 				var suffix = ((prodID.split("-")[5]).indexOf('00') > -1 || (prodID.split("-")[5]).indexOf('Q0') > -1 || (prodID.split("-")[5]).indexOf('C0') > -1 || (prodID.split("-")[5]).indexOf('P0') > -1 || (prodID.split("-")[5]).indexOf('N0') > -1) ? "" : prodID.split("-")[5]
 				
 				$scope.orderCode = "ORD"+ordernum.toString().toLowerCase().replace("ord","") +""+suffix;
-				$scope.noOfPrints = nPrints + 20;
+				$scope.noOfPrints = parseInt(nPrints) + 20;
 				$scope.linenumber = (lineNumber == undefined) ? $scope.linen : lineNumber;
 				
 				var modal = document.getElementById("coreTagPrint");
@@ -244,7 +245,7 @@ app.directive('autoComplete', function($timeout) {
 			};
 			
 			$scope.printBC = function(skidnumber,prodid,qty){			
-									
+					prodid = prodid.toUpperCase();				
 				if(skidnumber.length > 0){					
 					var skidIdFrom = skidnumber.split(",")[0];
 					var skidIdTo = skidnumber.split(",")[(skidnumber.split(",")).length - 1];
@@ -267,7 +268,7 @@ app.directive('autoComplete', function($timeout) {
 			
 			
 			$scope.printBarcodeOverwrite = function(skidnumbers,prodid){
-				
+				prodid = prodid.toUpperCase();
 				if(skidnumbers == undefined || skidnumbers == ''){
 					alert('Please enter barcode ids to print...');
 					
@@ -302,6 +303,7 @@ app.directive('autoComplete', function($timeout) {
 			
 			//printLabel(x.CUSTOMERNAME,x.PRODUCT_DESCRIPTION,x.SKID_QTY,x.UOM,x.ORDER_PO_NUMBER,prodic)
 			$scope.printLabel = function(custname,proddesc,noOfskids,qty,uom,ponum,productid){
+				productid = productid.toUpperCase();
 				$('#printLabel').html('');
 				var  htmlContent ='';
 				
@@ -527,12 +529,7 @@ app.directive('autoComplete', function($timeout) {
 					
 						paperColor = 'white';
 				}
-				
-				
-				
-				
-				
-				
+								
 					$('#printLabel').append(htmlContent);	
 
 						if(utag != undefined || utag != ''){
@@ -548,8 +545,7 @@ app.directive('autoComplete', function($timeout) {
 			
 			};
 			
-			//autocomplete
-			
+			//autocomplete			
 			$scope.datalist = productList;
 			
 			$scope.showChart = function(line){		 
