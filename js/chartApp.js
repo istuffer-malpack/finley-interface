@@ -42,10 +42,15 @@ function drawChart() {
 },
 titleTextStyle: {
     color: '#ffffff'
-},slices: {  10: {offset: 0.2},
-                    12: {offset: 0.3},
-                    14: {offset: 0.4},
-                    15: {offset: 0.5},
+},slices: {  2: {offset: 0.2},
+	     4: {offset: 0.3},
+	     6: {offset: 0.2},
+	     8: {offset: 0.3},
+	     10: {offset: 0.2},
+             12: {offset: 0.3},
+             14: {offset: 0.2},
+             16: {offset: 0.3},
+	     18: {offset: 0.2}
           },
 		};
 
