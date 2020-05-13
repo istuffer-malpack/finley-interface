@@ -71,7 +71,7 @@ body.dark-theme{
 .top-content, .bottom-content{
 	margin: 50px 0;
 }
-.top-content>h5>span.u-pull-right.orange-text.xsmall.cursor-pointer.no-margin.no-padding.hover-gray{
+span.u-pull-right.orange-text.xsmall.cursor-pointer.no-margin.no-padding.hover-gray{
     padding: 10px 0!important;
     margin-top: -10px;
 }
