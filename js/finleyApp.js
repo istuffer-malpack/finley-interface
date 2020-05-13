@@ -640,8 +640,16 @@ function printBarcode(skidnumber,prodid,qty){
 							});							
 		}
 			noOfCopies = skidIDs.length;
-
-			setTimeout(function(){$('#printSkids').printElem('skidTags',noOfCopies,orderNumber,localStorage.shift,"skidTagPrint")},1000);
+			var test = 'skidTags1';
+			if(noOfCopies > 1){
+				test = 'skidTags';
+			}
+			
+			setTimeout(function(){
+					
+				$('#printSkids').printElem(test,noOfCopies,orderNumber,localStorage.shift,"skidTagPrint")
+				
+				},1000);
 	
 }
 
@@ -667,6 +675,8 @@ jQuery.fn.extend({
 	 
 	 if(a == 'skidTags'){ 
 		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{width:920px;height: 620px;}';
+	 }else if(a == 'skidTags1'){ 
+		css = '@page { size: 11in 8.5in; margin-top: 3.5cm;}body{width:920px;height: 600px;}';
 	 }else if(a == 'skidLabel'){
 		 css = '@page { size: 11in 8.5in;margin:10mm 15mm;}body{width:980px;height: auto;color:#000;font-family:"Times New Roman"!important;}'+
 				'.container *{margin:0;padding:0;}.container{width:100%;font-weight:600;text-align:center;padding:15px 0 0;margin:0;page-break-inside:avoid;}'+
