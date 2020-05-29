@@ -168,6 +168,7 @@ app.directive('autoComplete', function($timeout) {
 			}, 5 * 60 * 1000); 
 				
 			$scope.populateJO = function(data) {
+				$scope.currentTime = new Date();
 				$scope.currentOrder = data;			
 				$scope.coretag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? ulineCode[data.PRODUCT_ID] : getCoreTag(data.PRODUCT_ID,data.SKID_QTY);
 				$scope.ulinetag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? getCoreTag(data.PRODUCT_ID,data.SKID_QTY) : '';
@@ -208,6 +209,7 @@ app.directive('autoComplete', function($timeout) {
 			};
 			
 			$scope.showCoreTagModal = function(prodID,qty,custid,ordernum,nPrints,lineNumber){
+				$scope.currentTime = new Date();
 				prodID = prodID.toUpperCase();
 				custid = custid.toUpperCase();
 				$scope.coretag = (custid == "ULINEC" || custid == "ULINE") ? ulineCode[prodID] : getCoreTag(prodID,qty);
@@ -225,6 +227,7 @@ app.directive('autoComplete', function($timeout) {
 			};		
 
 			$scope.printCoreTagLabel = function(coretag,ulinetag,orderCode,noOfPrints,linenum,isUline){
+				//$scope.currentTime = new Date();
 				var shiftTag = $scope.currentTime.toLocaleTimeString() + ' ' + ((localStorage.shift).split("/")[1]).replace("Shift ","") + '00' + linenum.replace("LINE ","");
 				//writeToSelectedPrinter(coretag,order,shift,noOfCopies,prodid,cust){
 				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints - 20,isUline);
