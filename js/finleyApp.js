@@ -400,7 +400,7 @@ app.directive('autoComplete', function($timeout) {
 						
 					case 'PR-M':
 						
-						if(prodDesc.indexOf('MAX 80') > -1){pt += '80';}
+						if(proddesc.indexOf('MAX 80') > -1){pt += '80';}
 					
 						for(var i=0;i<noOfskids;i++){					
 							htmlContent += '<div class="container">'+
