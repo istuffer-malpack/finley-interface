@@ -677,7 +677,7 @@ jQuery.fn.extend({
     style = document.createElement('style');
 	 
 	 if(a == 'skidTags'){ 
-		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{width:920px;height: 625px;}';
+		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{width:920px;height: 620px;}';
 	 }else if(a == 'skidTags1'){ 
 		css = '@page { size: 11in 8.5in; margin-top: 3.5cm;}body{width:920px;height: 600px;}';
 	 }else if(a == 'skidLabel'){
