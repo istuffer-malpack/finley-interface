@@ -23,13 +23,15 @@ function getCoreTag(prodID,noOfSkid){
 				
 	}else{
 	
-		var fstdigit = (length/100) % 5 == 0 ? coreCode[Math.floor(length/1000)] : coreCode[Math.floor(length/100)];
-		var secondDigit = (length/100) % 5 == 0 ? coreCode[Math.floor((length % 1000)/100)] : coreCode[Math.floor((length % 1000)/10)];					
+		var testing = (Math.floor(length/100)) > 26 ? Math.floor(length/1000) : Math.floor(length/100);
+		var fstdigit = (length/100) % 5 == 0 ? coreCode[Math.floor(length/1000)] : coreCode[testing];
 		
+		var secondDigit = (length/100) % 5 == 0 ? coreCode[Math.floor((length % 1000)/100)] : coreCode[Math.floor((length % 1000)/10)];					
+			
 		if(secondDigit == undefined) secondDigit = 'X';
 		
 		coretagCode += fstdigit+''+secondDigit;
-		
+		//console.log(coretagCode);
 	}
 			
 	//date
