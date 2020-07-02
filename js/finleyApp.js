@@ -696,7 +696,8 @@ jQuery.fn.extend({
 
 	style.type = 'text/css';
 	style.media = 'print';
-
+	style.id = 'printcss';
+	 
 	if (style.styleSheet){
 	  style.styleSheet.cssText = css;
 	} else {
