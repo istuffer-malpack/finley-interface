@@ -662,7 +662,7 @@ jQuery.fn.extend({
   var cloned = this.clone();
   var printSection = $('#printSection');
   if (printSection.length == 0) {
-   printSection = $('<div id="printSection" class="container"></div>');
+   printSection = $('<div id="printSection" class="container1"></div>');
    $('body').append(printSection);
   }
   printSection.append(cloned);
@@ -672,17 +672,17 @@ jQuery.fn.extend({
   
   //append css
   
-	var css = '@page { size: 8.5in 11in;margin:15mm 15mm;}body{color:#000!important;width:785px;height: 980px;page-break-after: avoid;page-break-before: avoid;}.container.job-order-form{width:130%!important;display:block;}.recipe{margin: 0px auto;}',
+	var css = '@page { size: 8.5in 11in;margin:15mm 15mm;}body{background: #ffffff!important;color:#000!important;width:785px;height: 980px;page-break-after: avoid;page-break-before: avoid;}.container.job-order-form{width:130%!important;display:block;}.recipe{margin: 0px auto;}',
     head = document.head || document.getElementsByTagName('head')[0],
     style = document.createElement('style');
 	 
 	 if(a == 'skidTags'){ 
-		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{width:920px;height: 625px;}';
+		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{background: #ffffff!important;width:920px;height: 625px;}';
 	 }else if(a == 'skidTags1'){ 
-		css = '@page { size: 11in 8.5in; margin-top: 3.5cm;}body{width:920px;height: 600px;}';
+		css = '@page { size: 11in 8.5in; margin-top: 3.5cm;}body{background: #ffffff!important;width:920px;height: 600px;}';
 	 }else if(a == 'skidLabel'){
-		 css = '@page { size: 11in 8.5in;margin:10mm 15mm;}body{width:980px;height: auto;color:#000;font-family:"Times New Roman"!important;}'+
-				'.container *{margin:0;padding:0;}.container{width:100%;font-weight:600;text-align:center;padding:15px 0 0;margin:0;page-break-inside:avoid;}'+
+		 css = '@page { size: 11in 8.5in;margin:10mm 15mm;}body{background: #ffffff!important;width:980px;height: auto;color:#000;font-family:"Times New Roman"!important;}'+
+				'.container1 *{margin:0;padding:0;}.container1{width:100%;font-weight:600;text-align:center;padding:15px 0 0;margin:0;page-break-inside:avoid;}'+
 				'.costumer{margin-bottom: 25px;}h1{font-size:72px;line-height:1.1;text-transform:uppercase;font-weight:700;margin-top:15px;}'+
 				'.product p{font-size:80px;line-height:1.1;margin-bottom: 30px;}.po{font-size:65px;}.made{position:relative;}.qty{font-size: 60px;line-height:1.1;margin-top:25px;}'+
 				'.made .madeincanada{font-size: 36px;margin-top:-15px;}.made .counter{position:absolute;right: -45px;top: 50px;}.counter.down{top:100px;margin-bottom:20px;}'+
