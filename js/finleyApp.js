@@ -710,6 +710,7 @@ jQuery.fn.extend({
 	toggleBody.show();
   
 	window.onafterprint = function(event) { 
+		$("#printcss").remove();
 	//console.log("done");
 	if(a == 'skidTags'){
 		//logPrint(a,b,c,d,e);	
@@ -807,7 +808,7 @@ function showModal(ele){
 		$('.reset').val('');
 		$('textarea').val('');
 		document.getElementById('isUline').checked = false;
-		
+		$("#printcss").remove();
 	}
 	
 	function windowOnClick(event) {
