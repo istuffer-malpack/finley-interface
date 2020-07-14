@@ -29,6 +29,7 @@ function getCoreTag(prodID,noOfSkid){
 		var secondDigit = (length/100) % 5 == 0 ? coreCode[Math.floor((length % 1000)/100)] : coreCode[Math.floor((length % 1000)/10)];					
 			
 		if(secondDigit == undefined) secondDigit = coreCode[Math.floor((length/100) % 10)];
+		if(secondDigit == undefined) secondDigit = "X";
 			//'X';
 		
 		coretagCode += fstdigit+''+secondDigit;
