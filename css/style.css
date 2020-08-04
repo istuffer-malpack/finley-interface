@@ -449,7 +449,7 @@ input[type="radio"].checked:after {
 	border-left: 1px #000 solid;
 }
 .no-top-border{
-	border-top: 0;
+	border-top: 0!important;
 }
 .no-border{
 	border: 0!important;
