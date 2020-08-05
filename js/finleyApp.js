@@ -234,6 +234,7 @@ app.directive('autoComplete', function($timeout) {
 			};
 
 			$scope.printCoreTagLabel = function(ordnum,qty,noOfPrints,shiftTag,customLabel,customerName,prod_id){
+				prod_id = prod_id.toUpperCase();
 				if(typeof noOfPrints === 'undefined'){
 					noOfPrints = 20;
 				}	
