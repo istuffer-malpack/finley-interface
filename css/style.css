@@ -71,10 +71,6 @@ body.dark-theme{
 .top-content, .bottom-content{
 	margin: 50px 0;
 }
-span.u-pull-right.orange-text.xsmall.cursor-pointer.no-margin.no-padding.hover-gray{
-    padding: 10px 0!important;
-    margin-top: -10px;
-}
 .fixed-headers {
   width: 100%;
   table-layout: fixed;
@@ -449,7 +445,7 @@ input[type="radio"].checked:after {
 	border-left: 1px #000 solid;
 }
 .no-top-border{
-	border-top: 0!important;
+	border-top: 0;
 }
 .no-border{
 	border: 0!important;
@@ -963,8 +959,14 @@ button, .button{
 		.AGE002{background-color:#FFF2CC; }
 
 @media print{	
-	body{background:#fff;color:#000!important;margin:0;} 	
-	
+body,html{
+	background:#fff;color:#000!important;margin:0;
+	height: auto;
+}
+body.dark-theme{
+	overflow: auto;
+}
+
 	.block {		
 		float: left;
 	}
@@ -1034,7 +1036,50 @@ button, .button{
 	.full-block {
 		width: 100%;
 	}
+	.container {
+    width: 85%; }
+  .column,
+  .columns {
+    margin-left: 2%; }
+  .column:first-child,
+  .columns:first-child {
+    margin-left: 0; }
+
+  .one.column,
+  .one.columns                    { width: 5.66666666667%; }
+  .two.columns                    { width: 14.3333333333%; }
+  .three.columns                  { width: 23.5%;            }
+  .four.columns                   { width: 31.6666666667%; }
+  .five.columns                   { width: 40.3333333333%; }
+  .six.columns                    { width: 49%;            }
+  .seven.columns                  { width: 57.6666666667%; }
+  .eight.columns                  { width: 66.3333333333%; }
+  .nine.columns                   { width: 74.5%;          }
+  .ten.columns                    { width: 83.6666666667%; }
+  .eleven.columns                 { width: 92.3333333333%; }
+  .twelve.columns                 { width: 100%; margin-left: 0; }
+
+  .one-third.column               { width: 31.6666666667%; }
+  .two-thirds.column              { width: 66.3333333333%; }
+
+  .one-half.column                { width: 49%; }
+  .modal-content{width:90%;}
 	
+	.recipe td .RGD001{background-color:#ff0000;color:#fff!important; }
+		.recipe td .RGE002{background-color:#ff3399;color:#fff!important; }
+		.recipe td .RGD003{background-color:#ff6600;color:#fff!important; }
+		.recipe td .RGD004{background-color:#a52a2a;color:#fff!important; }
+		.recipe td .RGD005{background-color:#800080;color:#fff!important; }
+		.recipe td .RGD006{background-color:#ffff00; }
+		.recipe td .RGD007{background-color:#009900;color:#fff!important; }
+		.recipe td .RGD008{background-color:#00ccff;background: rgb(0,204,255);color:#fff!important; }
+		.recipe td .RGE009{background-color:#000066;color:#fff!important; } 
+		.recipe td .RGE010{background-color:#808080;color:#fff!important; }
+		.recipe td .RGS011{background-color:#948A06; } 
+		.recipe td .RGM012{background-color:#FFDAB9; }
+		.recipe td .RGB013{background-color:#000000;color:#fff!important; }
+		.recipe td .AGC001{background-color:#8FBC8F; }
+		.recipe td .AGE002{background-color:#FFF2CC; }
 		
 .border {
     border: 1px solid #000!important;
