@@ -1,5 +1,5 @@
 var machineLines = ['LINE 1', 'LINE 2', 'LINE 3', 'LINE 4', 'LINE 5', 'LINE 6', 'LINE 7', 'LINE 8', 'LINE 9'];
-var productionSummary = [], summaryByProductdata = [], qcDataSource = [], qualityIssues = [];				
+var productionSummary = [], summaryByProductdata = [], qcDataSource = [], qualityIssues = [];
 var app = angular.module("app", []);
 app.factory("overviewService", function($http) {
   var service = {};
@@ -8,23 +8,23 @@ app.factory("overviewService", function($http) {
   service.getAllOrders = function() {
     return $http.get(gUrl + "schedData");
   };
-  
+
   service.getAllQcData = function() {
     return $http.get(gUrl + "qcData");
   };
-  
+
    service.getProductSummaryData = function() {
     return $http.get(gUrl + "summaryproduction");
   };
-  
+
   service.getDefectsData = function(id) {
     return $http.get(gUrl + "quality_issues");
   };
-  
+
   service.getLineInfoData = function(){
 	  return $http.get(gUrl + "MachineCapacity");
   };
-  
+
   service.getMessages = function(){
 	  return $http.get(gUrl + "messages");
   };
@@ -44,7 +44,7 @@ app.directive('autoComplete', function($timeout) {
             });
     };
 }).controller("overviewController", [ "$scope","$log","$interval","$timeout","$http","$filter","overviewService",
-	
+
 	function($scope, $log, $interval, $timeout, $http, $filter, overviewService) {
 		var init = function() {
 			$scope.loading = true;
@@ -52,6 +52,7 @@ app.directive('autoComplete', function($timeout) {
 			$scope.linen = machineLines[0];
 			$scope.user = localStorage.shift;
 			$scope.productId;
+      $scope.customerID;
 			$scope.qcData;
 			$scope.messages;
 			$scope.defectsD;
@@ -70,36 +71,38 @@ app.directive('autoComplete', function($timeout) {
 			$scope.isUline;
 			$scope.skidIdFrom;
 			$scope.skidIdTo;
-		
+			$scope.ordnumber;
+			$scope.noOfSkids;
+
 			$scope.getOrders = function(){
 				overviewService.getAllOrders().then(
 					function successCallback(response) {
-						$scope.schedule =  response.data.records;	
-							$scope.loading = false;			
-					},
-					function errorCallback(response) {
-						$log.log("Error");
-					}
-				);		  
-			};
-	  
-			$scope.machineLine = machineLines; 
-			
-			$scope.getQC = function(){
-				   overviewService.getAllQcData().then(
-					function successCallback(response) {
-					  $scope.qcData = response.data.records;					 
+						$scope.schedule =  response.data.records;
+							$scope.loading = false;
 					},
 					function errorCallback(response) {
 						$log.log("Error");
 					}
 				);
 			};
-			
+
+			$scope.machineLine = machineLines;
+
+			$scope.getQC = function(){
+				   overviewService.getAllQcData().then(
+					function successCallback(response) {
+					  $scope.qcData = response.data.records;
+					},
+					function errorCallback(response) {
+						$log.log("Error");
+					}
+				);
+			};
+
 			$scope.getLineInfo = function(){
 			   overviewService.getLineInfoData().then(
 				function successCallback(response) {
-					$scope.lineData = response.data.records;		 
+					$scope.lineData = response.data.records;
 					productionSummary = $scope.lineData;
 				},
 				function errorCallback(response) {
@@ -107,12 +110,12 @@ app.directive('autoComplete', function($timeout) {
 				}
 			  );
 			};
-	  
+
 			$scope.summaryByProduct = function(){
 				overviewService.getProductSummaryData().then(
 					function successCallback(response) {
 						$scope.summaryByProductdata =  response.data.records;
-						summaryByProductdata= $scope.summaryByProductdata;					 
+						summaryByProductdata= $scope.summaryByProductdata;
 					},
 					function errorCallback(response) {
 					  $log.log("Error");
@@ -123,14 +126,14 @@ app.directive('autoComplete', function($timeout) {
 			$scope.getMessage = function() {
 				overviewService.getMessages().then(
 					function successCallback(response) {
-						$scope.messages = response.data.records.filter(function(results) { return (results.Timestamp != '')});			 
+						$scope.messages = response.data.records.filter(function(results) { return (results.Timestamp != '')});
 					},
 					function errorCallback(response) {
 						$log.log("Error");
 					}
 				);
 			};
-			
+
 			$scope.getDefectData = function(){
 				overviewService.getDefectsData().then(
 					function successCallback(response) {
@@ -142,45 +145,45 @@ app.directive('autoComplete', function($timeout) {
 					}
 				);
 			};
-			
-			
+
+
 			$scope.$watch('schedule', function(newValue, oldValue, scope) {
 				return $scope.schedule;
 			}, true);
 			$scope.$watch('qcData', function(newValue, oldValue, scope) {
 				return $scope.qcData;
 			}, true);
-			
+
 			$scope.getOrders();
 			$scope.getQC();
 			$scope.getMessage();
 			$scope.getDefectData();
 			$scope.getLineInfo();
-			$scope.summaryByProduct();	
-					
-			$interval(function() {$scope.getOrders();}, 60 * 1000); 
+			$scope.summaryByProduct();
+
+			$interval(function() {$scope.getOrders();}, 60 * 1000);
 			$interval(function() {
-				$scope.getQC();				
+				$scope.getQC();
 				$scope.getDefectData();
 				$scope.getLineInfo();
 				$scope.summaryByProduct();
 				drawChart2();drawChart();
-			}, 5 * 60 * 1000); 
-				
+			}, 5 * 60 * 1000);
+
 			$scope.populateJO = function(data) {
 				$scope.currentTime = new Date();
-				$scope.currentOrder = data;			
+				$scope.currentOrder = data;
 				$scope.coretag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? ulineCode[data.PRODUCT_ID] : getCoreTag(data.PRODUCT_ID,data.SKID_QTY);
 				$scope.ulinetag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? getCoreTag(data.PRODUCT_ID,data.SKID_QTY) : '';
-				
+
 				document.querySelector('.recipe').innerHTML = '<table style="margin: 0 auto;"><tbody>'+data.RECIPECODE+'</tbody></table>';
-						
+
 				var modal = document.getElementById("jobOrderModal");
 				modal.style.display = "block";
 			};
-			
+
 			$scope.filmType = function(desc) {
-				if (desc != undefined) {
+				if (typeof desc !== 'undefined') {
 				 if (desc.indexOf('MACHINE') > 0) {
 				  return 'Machine Film'
 				 } else if (desc.indexOf('CONVERSION') > 0) {
@@ -190,10 +193,10 @@ app.directive('autoComplete', function($timeout) {
 				 }
 				}
 			};
-			
+
 			$scope.splitProduct = function(string, nb) {
 
-				if (string != undefined) {
+				if (typeof string !== 'undefined') {
 				 var array = string.split('-');
 				 //return array[nb];
 				 if (array[nb].indexOf('X') > 0) {
@@ -207,49 +210,46 @@ app.directive('autoComplete', function($timeout) {
 				 }
 				}
 			};
-			
+
 			$scope.showCoreTagModal = function(prodID,qty,custid,ordernum,nPrints,lineNumber){
 				$scope.currentTime = new Date();
 				prodID = prodID.toUpperCase();
 				custid = custid.toUpperCase();
 				$scope.coretag = (custid == "ULINEC" || custid == "ULINE") ? ulineCode[prodID] : getCoreTag(prodID,qty);
-				$scope.ulinetag = (custid == "ULINEC" || custid == "ULINE") ? getCoreTag(prodID,qty) : "";				
-				$scope.isUline = (custid == "ULINEC" || custid == "ULINE") ? true : false;
+				$scope.ulinetag = (custid == "ULINEC" || custid == "ULINE") ? getCoreTag(prodID,qty) : "";
+				$scope.isUline = (custid == "ULINEC" || custid == "ULINE") ? "Uline" : ((custid == "MORRIS" || custid == "PXYS") ? "Custom" : "Standard");
+				$scope.productId = prodID;
+				$scope.customerID = custid;
+				$scope.ordnumber = ordernum;
+				$scope.noOfSkids = qty;
 				var suffix = ((prodID.split("-")[5]).indexOf('00') > -1 || (prodID.split("-")[5]).indexOf('Q0') > -1 || (prodID.split("-")[5]).indexOf('C0') > -1 || (prodID.split("-")[5]).indexOf('P0') > -1 || (prodID.split("-")[5]).indexOf('N0') > -1) ? "" : prodID.split("-")[5]
-				
+
 				$scope.orderCode = "ORD"+ordernum.toString().toLowerCase().replace("ord","") +""+suffix;
 				$scope.noOfPrints = parseInt(nPrints) + 20;
-				$scope.linenumber = (lineNumber == undefined) ? $scope.linen : lineNumber;
-				
+				$scope.linenumber = (typeof lineNumber === 'undefined') ? $scope.linen : lineNumber;
+
 				var modal = document.getElementById("coreTagPrint");
 				modal.style.display = "block";
-			
-			};		
 
-			$scope.printCoreTagLabel = function(coretag,ulinetag,orderCode,noOfPrints,linenum,isUline){
-				//$scope.currentTime = new Date();
-				var shiftTag = $scope.currentTime.toLocaleTimeString() + ' ' + ((localStorage.shift).split("/")[1]).replace("Shift ","") + '00' + linenum.replace("LINE ","");
-				//writeToSelectedPrinter(coretag,order,shift,noOfCopies,prodid,cust){
-				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints - 20,isUline);
 			};
-			
-			$scope.printLabelCTag = function(prod_id,ordnum,totalSkid,noOfPrint,lineNumber){
-				
-				//check if uline
-				var isUline = document.getElementById('isUline').checked;
-				var custID = (isUline) ? "ULINE" : "";
-				
-				//close modal
-				closeModal('printLabelCoretag');
-				
-				//show print modal
-				$scope.showCoreTagModal(prod_id,totalSkid,custID,ordnum,noOfPrint,lineNumber,isUline);
+
+			$scope.printCoreTagLabel = function(ordnum,qty,noOfPrints,shiftTag,customLabel,customerName,prod_id){
+				if(typeof noOfPrints === 'undefined'){
+					noOfPrints = 20;
+				}	
+				var coretag = (customLabel == "Uline") ? ulineCode[prod_id] : getCoreTag(prod_id,qty);
+				var ulinetag = (customLabel == "Uline") ? getCoreTag(prod_id,qty) : "";
+				var suffix = ((prod_id.split("-")[5]).indexOf('00') > -1 || (prod_id.split("-")[5]).indexOf('Q0') > -1 || (prod_id.split("-")[5]).indexOf('C0') > -1 || (prod_id.split("-")[5]).indexOf('P0') > -1 || (prod_id.split("-")[5]).indexOf('N0') > -1) ? "" : prod_id.split("-")[5]
+
+				var orderCode = "ORD"+ordnum.toString().toLowerCase().replace("ord","") +""+suffix;
+				//console.log(coretag+"/"+ulinetag+"/"+orderCode+"/"+shiftTag+"/"+noOfPrints+"/"+customLabel+"/"+customerName+"/"+prod_id);
+				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints,customLabel,customerName,prod_id);
 				
 			};
-			
-			$scope.printBC = function(skidnumber,prodid,qty){			
-					prodid = prodid.toUpperCase();				
-				if(skidnumber.length > 0){					
+
+			$scope.printBC = function(skidnumber,prodid,qty){
+					prodid = prodid.toUpperCase();
+				if(skidnumber.length > 0){
 					var skidIdFrom = skidnumber.split(",")[0];
 					var skidIdTo = skidnumber.split(",")[(skidnumber.split(",")).length - 1];
 					var txt;
@@ -258,90 +258,106 @@ app.directive('autoComplete', function($timeout) {
 					  printBarcode(skidnumber,prodid,qty);
 					} else {
 					  txt = "You pressed Cancel!";
-					}					
-					
-				}else{					
+					}
+
+				}else{
 					$scope.productId = prodid;
 					var modal = document.getElementById('skidTagPrint');
 					$('.bc-form input').val('');
-					modal.style.display = "block";					
+					modal.style.display = "block";
 				}
-			
+
 			};
-			
-			
+
+
 			$scope.printBarcodeOverwrite = function(skidnumbers,prodid){
 				prodid = prodid.toUpperCase();
-				if(skidnumbers == undefined || skidnumbers == ''){
+				if(typeof skidnumbers === 'undefined' || skidnumbers == ''){
 					alert('Please enter barcode ids to print...');
-					
-				}else{								
-													
+
+				}else{
+
 						var skidIDS = new Array();
-						var skidnumberArray = skidnumbers.split(';');				
-						
-							for(var i=0;i<skidnumberArray.length;i++){							
-								
+						var skidnumberArray = skidnumbers.split(';');
+
+							for(var i=0;i<skidnumberArray.length;i++){
+
 								if(skidnumberArray[i].indexOf('-') > -1){
-									
-									var skidWithDash = skidnumberArray[i].split('-');						
+
+									var skidWithDash = skidnumberArray[i].split('-');
 									var count = (parseInt(skidWithDash[1]) - parseInt(skidWithDash[0])) + 1;
 									var start = parseInt(skidWithDash[0]);
-									
-									for(var j=0;j<count;j++){							
+
+									for(var j=0;j<count;j++){
 										skidIDS.push(start + j);
-									}			
-									
-								}else{								
-									skidIDS.push(parseInt(skidnumberArray[i]));								
-								}						
+									}
+
+								}else{
+									skidIDS.push(parseInt(skidnumberArray[i]));
+								}
 							}
 							//console.log(skidIDS.join(','));
 							var skidIDdta = (skidIDS.length == 1) ? skidIDS.toString() : skidIDS.join(',');
 							printBarcode(skidIDdta,prodid,skidIDS.length);
-						
+
 				}
 			};
+
 			
 			
-			//printLabel(x.CUSTOMERNAME,x.PRODUCT_DESCRIPTION,x.SKID_QTY,x.UOM,x.ORDER_PO_NUMBER,prodic)
+			$scope.coretags = function(prod_id,totalSkid,customLabel){ $scope.currentTime = new Date();  return (customLabel == "Uline") ? ulineCode[prod_id] : getCoreTag(prod_id,totalSkid)};
+			$scope.ulineTags = function(prod_id,totalSkid,customLabel){return (customLabel == "Uline") ? getCoreTag(prod_id,totalSkid) : ""};
+			$scope.timestamped = function(linenum){return $scope.currentTime.toLocaleTimeString() + ' ' + ((localStorage.shift).split("/")[1]).replace("Shift ","") + '00' + linenum.replace("LINE ","")};
+				
 			$scope.printLabel = function(custname,proddesc,noOfskids,qty,uom,ponum,productid){
 				productid = productid.toUpperCase();
 				$('#printLabel').html('');
-				var  htmlContent ='';
-				
-				if(proddesc == undefined || proddesc == ''){
-					proddesc = productDescription[productid];
+				var htmlContent = '';
+				var ppp = '';
+
+				if(typeof proddesc === 'undefined' || proddesc == ''){
+							//proddesc = productDescription[productid];
+				  //20" X 55GA / 14MIC X 6500'
+				  var wd = productid.split("-")[2];
+				  if(wd.indexOf('X') > -1){
+					wd = wd.replace('X','') +'" ';
+				  }else if(wd.substr(0,1) == '0'){
+					wd = Number(wd) +'&#39; '
+				  }else{
+					wd = wd +'MM ';
+				  }
+				  var pcode = ((productid.split("-")[5]).substr(0,1) == 'Q' || (productid.split("-")[5]).substr(0,1) == 'P' || (productid.split("-")[5]).substr(0,1) == '0') ? '' : (productid.split("-")[5]).substr(0,3);
+				  //TO INCLUDE K 
+				  ppp = wd + Number(productid.split("-")[3]) +'GA X '+ productid.split("-")[4] +'&#39;' + pcode;
+
+				}else{
+				  var test = proddesc.slice(0, proddesc.lastIndexOf('('));
+						var p = test.substring(test.indexOf('('),test.indexOf(')')+1); //remove second ();
+						var pp = test.substring(0,test.indexOf('FILM') + 4);
+						if(test.indexOf('FILM') <= -1){
+							pp = test.substring(0,test.indexOf('CORE') + 4);
+						}
+						ppp = test.replace(p,"").replace(pp,"").replace(/#PLBL/g,"").replace(/#1INCORE/g,"").replace(/STD/g,"");
 				}
-				var test = proddesc.slice(0, proddesc.lastIndexOf('('));				
-							
-				var p = test.substring(test.indexOf('('),test.indexOf(')')+1); //remove second ();
-				
-				var pp = test.substring(0,test.indexOf('FILM') + 4);
-				
-				if(test.indexOf('FILM') <= -1){
-					pp = test.substring(0,test.indexOf('CORE') + 4);
-				}
-				
-				var ppp = test.replace(p,"").replace(pp,"").replace(/#PLBL/g,"").replace(/#1INCORE/g,"").replace(/STD/g,"");
-				
+
+
 				var pt = productid.slice(0,4);
 				var ctag = getCoreTag(productid,noOfskids);
 				var utag = ulineCode[productid];
-				
+
 				switch (pt){
 					case 'AX-M':
-						
-						for(var i=0;i<noOfskids;i++){					
-							htmlContent += '<div class="container">'+
+
+						for(var i=0;i<noOfskids;i++){
+							htmlContent += '<div class="">'+
 												'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
 												'<div class="costumer">'+
 													'<h1>'+custname+'</h1>'+
 												'</div>'+
 												'<div class="product">'+
 													'<p>'+ppp+'</p>'+
-												'</div>'+										
-												'<div class="made">'+										
+												'</div>'+
+												'<div class="made">'+
 													'<div class="">'+
 														'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
 													'</div>'+
@@ -350,68 +366,101 @@ app.directive('autoComplete', function($timeout) {
 														'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
 													'</div>'+
 													'<div>'+
-														'<p class="po">P.O.# '+ponum+'</p>'+						
+														'<p class="po">P.O.# '+ponum+'</p>'+
 														'<p class="madeincanada">MADE IN CANADA</p>'+
-													'</div>'+											
+													'</div>'+
 													'<div class="footer"><img src=\"./img/AX-FOOTER.jpg\"/></div>'+
 													'<div class="counter">'+
 														'<span>'+(i+1)+'</span>'+
 														'<span>'+noOfskids+'</span>'+
-													'</div>'+										
-												'</div>'+										
+													'</div>'+
+												'</div>'+
 											'</div>';
-						}		
-						paperColor = 'blue';							
+						}
+						paperColor = 'blue';
 						break;
-						
+
 					case 'PL-M':
-						
-						for(var i=0;i<noOfskids;i++){					
-							htmlContent += '<div class="container">'+
-												'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
-												'<div class="costumer">'+
-													'<h1>'+custname+'</h1>'+
-												'</div>'+
-												'<div class="product">'+
-													'<p>'+ppp+'</p>'+
-												'</div>'+										
-												'<div class="made">'+										
-													'<div class="">'+
-														'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
-													'</div>'+
-													'<div class="lot-box">'+
-														'<h5>Lot Number:</h5>'+
-														'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
-													'</div>'+
-													'<div>'+
-														'<p class="po">P.O.# '+ponum+'</p>'+						
-														'<p class="madeincanada">MADE IN CANADA</p>'+
-													'</div>'+											
-													'<div class="footer"><img src=\"./img/AX-FOOTER.jpg\"/></div>'+
-													'<div class="counter">'+
-														'<span>'+(i+1)+'</span>'+
-														'<span>'+noOfskids+'</span>'+
-													'</div>'+										
-												'</div>'+										
-											'</div>';
-						}		
+
+						for(var i=0;i<noOfskids;i++){
+
+                      if(typeof utag !== 'undefined'){
+                        htmlContent += '<div class="">'+
+      														'<div class="product-logo" style="font-size:200px;font-size: 200px;font-weight:700;padding:0;line-height:.8;">'+utag+'</div>'+
+      														'<div class="costumer">'+
+      															'<h1 style="font-size:84px;line-height:.8;">'+ppp+'</h1>'+
+      														'</div>'+
+      														'<div class="" style="margin-top:-20px;">'+
+      															'<p class="h2" style="font-size:58px;">MADE IN CANADA</p>'+
+      														'</div>'+
+      														'<div class="made">'+
+      															'<div class="lot-box middle '+ ((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
+      																'<h5>Lot Number:</h5>'+
+      																'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
+      															'</div>'+
+      															'<div class="" style="margin-top:-15px;">'+
+      																'<p class="po">P.O.# '+ponum+'</p>'+
+      															'</div>'+
+      															'<div>'+
+      																'<p class="big" style="margin-top:-15px;">'+
+      																	'<img class="uline-barcode barcode" />'+
+      																'</p>'+
+      															'</div>'+
+      															'<div class="counter">'+
+      																'<span>'+(i+1)+'</span>'+
+      																'<span>'+noOfskids+'</span>'+
+      															'</div>'+
+      														'</div>'+
+      													'</div>';
+                      }else{
+                        htmlContent += '<div class="">'+
+                                  '<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
+                                  '<div class="costumer">'+
+                                    '<h1>'+custname+'</h1>'+
+                                  '</div>'+
+                                  '<div class="product">'+
+                                    '<p>'+ppp+'</p>'+
+                                  '</div>'+
+                                  '<div class="made">'+
+                                    '<div class="">'+
+                                      '<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
+                                    '</div>'+
+                                    '<div class="lot-box">'+
+                                      '<h5>Lot Number:</h5>'+
+                                      '<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
+                                    '</div>'+
+                                    '<div>'+
+                                      '<p class="po">P.O.# '+ponum+'</p>'+
+                                      '<p class="madeincanada">MADE IN CANADA</p>'+
+                                    '</div>'+
+                                    '<div class="footer"><img src=\"./img/AX-FOOTER.jpg\"/></div>'+
+                                    '<div class="counter">'+
+                                      '<span>'+(i+1)+'</span>'+
+                                      '<span>'+noOfskids+'</span>'+
+                                    '</div>'+
+                                  '</div>'+
+                                '</div>';
+
+
+                      }
+						}
 						paperColor = 'green';
 						break;
-						
+
 					case 'PR-M':
-						
+
 						if(proddesc.indexOf('MAX 80') > -1){pt += '80';}
-					
-						for(var i=0;i<noOfskids;i++){					
-							htmlContent += '<div class="container">'+
+
+						for(var i=0;i<noOfskids;i++){
+							htmlContent += '<div class="">'+
 												'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
 												'<div class="costumer">'+
 													'<h1>'+custname+'</h1>'+
 												'</div>'+
 												'<div class="product">'+
 													'<p>'+ppp+'</p>'+
-												'</div>'+										
-												'<div class="made">'+										
+												'</div>'+
+												'<div class="made">'+
 													'<div class="">'+
 														'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
 													'</div>'+
@@ -420,59 +469,59 @@ app.directive('autoComplete', function($timeout) {
 														'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
 													'</div>'+
 													'<div>'+
-														'<p class="po">P.O.# '+ponum+'</p>'+						
+														'<p class="po">P.O.# '+ponum+'</p>'+
 														'<p class="madeincanada">MADE IN CANADA</p>'+
-													'</div>'+											
-													
+													'</div>'+
+
 													'<div class="counter">'+
 														'<span>'+(i+1)+'</span>'+
 														'<span>'+noOfskids+'</span>'+
-													'</div>'+										
-												'</div>'+										
+													'</div>'+
+												'</div>'+
 											'</div>';
-						}		
+						}
 						paperColor = 'yellow';
 					break;
-					
+
 					default:
-						
-						if(utag == undefined || utag == ''){
+
+					  if(typeof utag === 'undefined'){
 							if(pt == "VX-H"){
-								for(var i=0;i<noOfskids;i++){					
-									htmlContent += '<div class="container">'+
+								for(var i=0;i<noOfskids;i++){
+									htmlContent += '<div class="">'+
 														'<div class="product-logo" style="text-align:center; font-size: 120px;font-weight:700;line-height:1.1;">FULLER ROAD</div>'+
-														
+
 														'<div class="product">'+
 															'<p style="font-size:85px;">'+ppp.replace("CONVERSION ROLL ","")+'</p>'+
-														'</div>'+										
-														'<div class="made">'+															
+														'</div>'+
+														'<div class="made">'+
 															'<div class="">'+
 																'<p style="font-size: 85px;">'+ordernumber+'</p>'+
 																'<p class="big" style="font-size:65px; line-height:1.1;">VMAXX HAND FILM</p>'+
 																'<p class="big" style="font-size:65px; line-height:1.1;">CONVERSION ROLLS</p>'+
-															'</div>'+														
+															'</div>'+
 															'<div>'+
-																'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+																					
-																
-															'</div>'+													
+																'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
+
+															'</div>'+
 															'<div class="counter down">'+
 																'<span>'+(i+1)+'</span>'+
 																'<span>'+noOfskids+'</span>'+
-															'</div>'+										
-														'</div>'+										
+															'</div>'+
+														'</div>'+
 													'</div>';
 								}
-								
-							}else{							
-								for(var i=0;i<noOfskids;i++){					
-									htmlContent += '<div class="container">'+
-														'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
+
+							}else{
+								for(var i=0;i<noOfskids;i++){
+									htmlContent += '<div class="">'+
+														'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt="" /></div>'+
 														'<div class="costumer">'+
 															'<h1>'+custname+'</h1>'+
 														'</div>'+
 														'<div class="product">'+
 															'<p>'+ppp+'</p>'+
-														'</div>'+										
+														'</div>'+
 														'<div class="made">'+
 															'<div class="lot-box middle '+ ((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
 																'<h5>Lot Number:</h5>'+
@@ -480,32 +529,32 @@ app.directive('autoComplete', function($timeout) {
 															'</div>'+
 															'<div class="">'+
 																'<p class="po">P.O.# '+ponum+'</p>'+
-															'</div>'+														
+															'</div>'+
 															'<div>'+
-																'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+																					
+																'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
 																'<p class="madeincanada">MADE IN CANADA</p>'+
-															'</div>'+													
+															'</div>'+
 															'<div class="counter">'+
 																'<span>'+(i+1)+'</span>'+
 																'<span>'+noOfskids+'</span>'+
-															'</div>'+										
-														'</div>'+										
+															'</div>'+
+														'</div>'+
 													'</div>';
 								}
 							}
-							
-							
-						}else{							
-														
-							for(var i=0;i<noOfskids;i++){					
-									htmlContent += '<div class="container">'+
+
+
+						}else{
+
+							for(var i=0;i<noOfskids;i++){
+									htmlContent += '<div class="">'+
 														'<div class="product-logo" style="font-size:200px;font-size: 200px;font-weight:700;line-height:1;padding:0;line-height:.8;">'+utag+'</div>'+
 														'<div class="costumer">'+
 															'<h1 style="font-size:82px;line-height:1.1;">'+ppp+'</h1>'+
 														'</div>'+
 														'<div class="">'+
 															'<p class="h2" style="font-size:58px;">MADE IN CANADA</p>'+
-														'</div>'+										
+														'</div>'+
 														'<div class="made">'+
 															'<div class="lot-box middle '+ ((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
 																'<h5>Lot Number:</h5>'+
@@ -513,56 +562,56 @@ app.directive('autoComplete', function($timeout) {
 															'</div>'+
 															'<div class="">'+
 																'<p class="po">P.O.# '+ponum+'</p>'+
-															'</div>'+														
-															'<div>'+																																				
+															'</div>'+
+															'<div>'+
 																'<p class="big">'+
 																	'<img class="uline-barcode barcode" />'+
 																'</p>'+
-															'</div>'+													
+															'</div>'+
 															'<div class="counter">'+
 																'<span>'+(i+1)+'</span>'+
 																'<span>'+noOfskids+'</span>'+
-															'</div>'+										
-														'</div>'+										
+															'</div>'+
+														'</div>'+
 													'</div>';
 								}
-							
-							
+
+
 						}
-					
+
 						paperColor = 'white';
 				}
-								
-					$('#printLabel').append(htmlContent);	
 
-						if(utag != undefined || utag != ''){
+					$('#printLabel').append(htmlContent);
+
+						if(typeof utag === 'undefined' || utag != ''){
 							JsBarcode(".uline-barcode.barcode", utag, {format: "code128",font: "arial",fontSize: 40,textMargin: 0,text: "",height:80,displayValue: false});
 						}
-										
-					setTimeout(function(){	
+
+					setTimeout(function(){
 						alert('REMINDER: Make sure you insert '+paperColor+' paper before you hit the print button.');
-						$('#printLabel').printElem('skidLabel',0,0,localStorage.shift,""); 	
-							
+						$('#printLabel').printElem('skidLabel',0,0,localStorage.shift,"");
+
 					},800);
-				
-			
+
+
 			};
-			
-			//autocomplete			
+
+			//autocomplete
 			$scope.datalist = productList;
-			
-			$scope.showChart = function(line){		 
-		 
-				var keyw = productionSummary[parseInt(line.replace('LINE ','')) - 1].KEYWORD;	
-				
-				qcDataSource = $scope.qcData.filter(function(results) { return (results.KEYWORD == keyw && results.LINE == line)});		
+
+			$scope.showChart = function(line){
+
+				var keyw = productionSummary[parseInt(line.replace('LINE ','')) - 1].KEYWORD;
+
+				qcDataSource = $scope.qcData.filter(function(results) { return (results.KEYWORD == keyw && results.LINE == line)});
 				drawChart2();drawChart();
-			};	
-			
+			};
+
 			$scope.ulCode = function(prod){
 				return ulineCode[prod];
 			};
-			
+
 			$scope.addMessage = function() {
 
 			$scope.errortext = "";
@@ -576,16 +625,16 @@ app.directive('autoComplete', function($timeout) {
 			  'Message': $scope.addMe,
 			  'Operator': localStorage.shift
 			 });
-			 //send message to google sheets				
+			 //send message to google sheets
 			 var dataUrl = "https://script.google.com/macros/s/AKfycbza85RHYVyl8LGMN6lmqw_8AESHPZ5dVnqRnV00BQba24U4RRI/exec?Message=" +
 			  $scope.addMe + "&Operator=" + localStorage.shift;
 
 			 $http.get(dataUrl).then(function(response) {
 
 			  if (response.data.result === 'success') {
-			   //console.log("to write localstorage");	
+			   //console.log("to write localstorage");
 				$('#MessageForm textarea').val("");
-				closeModal('sendMessageForm');			   
+				closeModal('sendMessageForm');
 			  }
 
 			 });
@@ -600,22 +649,22 @@ app.directive('autoComplete', function($timeout) {
 		$scope.errortext = "";
 		$scope.messages.splice(x, 1);
 	   };
-			
-			
+
+
 	  };
 	  init();
-	}	
+	}
 ]);
 
 function printBarcode(skidnumber,prodid,qty){
 	var noOfCopies = 0;
-	var orderNumber = '';	
-	$('#printSkids').html('');	
+	var orderNumber = '';
+	$('#printSkids').html('');
 	var skidIDs = new Array();
 		skidIDs = (skidnumber.split(',')).filter((v, i, a) => a.indexOf(v) === i);
-		
-		for(var i=0;i<qty;i++){					
-						
+
+		for(var i=0;i<qty;i++){
+
 			htmlContent = '<div class="bc-div" style="width: 100%;display:block;">'+
 							'<p class="bcodelabel" style="width:100%;">'+
 								'<span style="float:left;margin-left:5px;">'+skidIDs[i]+'</span>'+
@@ -625,12 +674,12 @@ function printBarcode(skidnumber,prodid,qty){
 							'<p style="width:100%;text-align:center;margin: 10px 0 0 50px;color: #000;font-size: 32px;line-height: 1.25rem;font-family: arial;font-weight: 400;">MADE IN CANADA</p>'+
 							'<p style="width:100%;text-align:right;margin-top:180px;color: #000;font-size:40px;font-family: arial;font-weight:700;margin-bottom:0;padding-bottom:30px;">'+
 								(i + 1)+' of '+ qty +'</p>'+
-							'</div>';				  
-								
-							
+							'</div>';
+
+
 			$('#printSkids').append(htmlContent);
 
-				JsBarcode(".barcode"+skidIDs[i], skidIDs[i], 
+				JsBarcode(".barcode"+skidIDs[i], skidIDs[i],
 							{
 								format: "code39",
 								font: "arial",
@@ -639,23 +688,27 @@ function printBarcode(skidnumber,prodid,qty){
 								text: skidIDs[i],
 								width: 10,
 								height: 250,
-								displayValue: false	
-							});							
+								displayValue: false
+							});
 		}
 			noOfCopies = skidIDs.length;
 			var test = 'skidTags1';
 			if(noOfCopies > 1){
 				test = 'skidTags';
 			}
-			
-			setTimeout(function(){
-					
-				$('#printSkids').printElem(test,noOfCopies,orderNumber,localStorage.shift,"skidTagPrint")
-				
-				},1000);
-	
-}
 
+			setTimeout(function(){
+
+				$('#printSkids').printElem(test,noOfCopies,orderNumber,localStorage.shift,"skidTagPrint");
+
+				},1000);
+
+}
+function printJOform(){
+//  var htmlContent = $('#job_Order_Form');
+  //$('#printJobOrderForm').append(htmlContent);
+  $('#job_Order_Form').printElem('',0,0,localStorage.shift,"");
+}
 
 jQuery.fn.extend({
  printElem: function(a,b,c,d,e) {
@@ -669,23 +722,25 @@ jQuery.fn.extend({
   var toggleBody = $('body *:visible');
   toggleBody.hide();
   $('#printSection, #printSection *').show();
-  
+
   //append css
-  
-	var css = '@page { size: 8.5in 11in;margin:15mm 15mm;}body{background: #ffffff!important;color:#000!important;width:785px;height: 980px;page-break-after: avoid;page-break-before: avoid;}.container.job-order-form{width:130%!important;display:block;}.recipe{margin: 0px auto;}',
+
+	var css = '@page { size: 8.5in 11in;margin:1.5cm 15mm;}body{background: #ffffff!important;color:#000!important;width:785px;height: 980px;page-break-after: avoid;page-break-before: avoid;}'+
+            '.job-order-form{width:130%!important;display:block;}.recipe{margin: 0px auto;}.recipe th, .recipe td{padding: 10px 7px;}.recipe span{padding: 7px 5px; width: 106px;',
+
     head = document.head || document.getElementsByTagName('head')[0],
     style = document.createElement('style');
-	 
-	 if(a == 'skidTags'){ 
+
+	 if(a == 'skidTags'){
 		css = '@page { size: 11in 8.5in; margin-top: 5.5cm;}body{background: #ffffff!important;width:920px;height: 625px;}';
-	 }else if(a == 'skidTags1'){ 
+	 }else if(a == 'skidTags1'){
 		css = '@page { size: 11in 8.5in; margin-top: 3.5cm;}body{background: #ffffff!important;width:920px;height: 600px;}';
 	 }else if(a == 'skidLabel'){
-		 css = '@page { size: 11in 8.5in;margin:10mm 15mm;}body{background: #ffffff!important;width:980px;height: auto;color:#000;font-family:"Times New Roman"!important;}'+
+		 css = '@page { size: 11in 8.5in;margin:1cm 5mm;}body{background: #ffffff!important;width:980px;height: 600px;color:#000;font-family:"Times New Roman"!important;}'+
 				'.container1 *{margin:0;padding:0;}.container1{width:100%;font-weight:600;text-align:center;padding:15px 0 0;margin:0;page-break-inside:avoid;}'+
 				'.costumer{margin-bottom: 25px;}h1{font-size:72px;line-height:1.1;text-transform:uppercase;font-weight:700;margin-top:15px;}'+
 				'.product p{font-size:80px;line-height:1.1;margin-bottom: 30px;}.po{font-size:65px;}.made{position:relative;}.qty{font-size: 60px;line-height:1.1;margin-top:25px;}'+
-				'.made .madeincanada{font-size: 36px;margin-top:-15px;}.made .counter{position:absolute;right: -45px;top: 50px;}.counter.down{top:100px;margin-bottom:20px;}'+
+				'.made .madeincanada{font-size: 36px;margin-top:-15px;}.made .counter{position:absolute;right: -30px;top: 55px;}.counter.down{top:100px;margin-bottom:20px;}'+
 				'.lot-box{position:absolute; left:0;top:50px;padding:10px; text-align:center; border-style: double; }.lot-box.middle{position:relative;top:-20px;margin: 15px auto 0;width: 250px;}.lot-box.middle.no-lot-box{display:none;}'+
 				'.h2{font-size:55px;font-weight:700;margin:0}h5{font-weight:700;font-size: 1.5em;}h4{font-weight:700;font-size:1.75em;margin:10px;}h5 span{padding-left:10px}'+
 				'.product-logo{padding-top:0px}.product-logo img{height:120px;width:90%;display:block;margin:-15px auto 5px}'+
@@ -697,30 +752,30 @@ jQuery.fn.extend({
 	style.type = 'text/css';
 	style.media = 'print';
 	style.id = 'printcss';
-	 
+
 	if (style.styleSheet){
 	  style.styleSheet.cssText = css;
 	} else {
 	  style.appendChild(document.createTextNode(css));
-	  
-	} 
-	
-	head.appendChild(style);  
-	window.print();  
-	printSection.remove();  
+
+	}
+
+	head.appendChild(style);
+	window.print();
+	printSection.remove();
 	toggleBody.show();
-  
-	window.onafterprint = function(event) { 
+
+	window.onafterprint = function(event) {
 		$("#printcss").remove();
 	//console.log("done");
 	if(a == 'skidTags'){
-		//logPrint(a,b,c,d,e);	
-	}		
+		//logPrint(a,b,c,d,e);
+	}
 	};
-	
+
 	//var modal = document.getElementById("skidTagPrint");
-		//modal.style.display = "none";	
-  
+		//modal.style.display = "none";
+
  }
 
 });
@@ -751,14 +806,14 @@ function openNav(ele) {
 function closeNav(ele) {
   document.getElementById(ele).style.width = "0%";
 }
-	
+
 	var printEvent = window.matchMedia('print');
 	printEvent.addListener(function(printEnd) {
 		if (!printEnd.matches) {
 			closeModal("skidTagPrint");
 		};
 	});
-		
+
 	function showReport(div){
 		var s = document.getElementById(div);
 		var a = document.getElementById('axis');
@@ -771,24 +826,24 @@ function closeNav(ele) {
 		st.style.display = "none";
 		s.style.display = "block";
 		showModal('customerReturn');
-	}	
+	}
 function showMessage(ele){
 		var user = $(ele).find('h6').html();
 		var message = $(ele).find('p').html();
 		$('#fromUser').empty().html(user);
 		$('#messagebody').empty().html(message);
-	
+
 		showModal('showMessage');
-		
+
 	}
 	function checkedRadio(element_id){
-	
+
 		//var ele = document.getElementById(element_id);
-		//ele.checked = true;		
+		//ele.checked = true;
 		$('#'+element_id).parent().find('input[type="radio"]').removeClass('checked').removeAttr('checked','checked');
 		$('#'+element_id).addClass('checked').attr('checked','checked');
-		
-		
+
+
 	}
 
 // Get the modal
@@ -808,27 +863,28 @@ function showModal(ele){
 		modal.style.display = "none";
 		$('.reset').val('');
 		$('textarea').val('');
+		$('input[type="radio"].reset').removeClass('checked');
 		document.getElementById('isUline').checked = false;
 		$("#printcss").remove();
 	}
-	
+
 	function windowOnClick(event) {
 		var ele = event.target.id;
 		//alert(ele);
 		event.preventDefault();
-		if(ele == 'jobOrderModal' || ele == 'skidTagPrint' || ele == 'scheduleModal' || ele == 'printLabelBarcode' || ele == 'printLabelTags' || ele == 'printLabelCoretag' || ele == 'qualityChart' || ele == 'scrapReportForm' || 
-			ele == 'sendMessageForm' || ele == 'customerReturn' || ele == 'showMessage' || ele == 'dailyChecklistForm' || ele == 'dailyChecklistReport' || ele == 'printLabelCoretag' || ele == 'coreTagPrint'){				
+		if(ele == 'jobOrderModal' || ele == 'skidTagPrint' || ele == 'scheduleModal' || ele == 'printLabelBarcode' || ele == 'printLabelTags' || ele == 'printLabelCoretag' || ele == 'qualityChart' || ele == 'scrapReportForm' ||
+			ele == 'sendMessageForm' || ele == 'customerReturn' || ele == 'showMessage' || ele == 'dailyChecklistForm' || ele == 'dailyChecklistReport' || ele == 'printLabelCoretag' || ele == 'coreTagPrint'){
 				closeModal(ele);
 		}
-		
-		
+
+
 	}
 	window.addEventListener("click", windowOnClick);
-	
-	
+
+
 //toggle switch
 function toggleswitch() {
-	
+
   var checkbox = document.getElementById('isUline');
   //console.log(checkbox.checked);
   if(checkbox.checked){
@@ -837,10 +893,10 @@ function toggleswitch() {
 	  checkbox.checked = true;
   }
 
-  
-}	
+
+}
 $( ".formSubmit" ).click(function( event ) {
- 
+
   event.preventDefault();
   $('.error-alert').css("display","none");
  // $('#scrapForm').submit();
@@ -854,18 +910,18 @@ $( ".formSubmit" ).click(function( event ) {
 				$('.submitted-alert').css("display","block");
 				$('#scrapForm').trigger("reset");
 				setTimeout(function(){$('#scrapReportForm .close').trigger('click');}, 2000);
-				
+
 			}else{
 				$('.error-alert').css("display","block");
 				//alert("Ooppsss... Something went wrong, please resubmit your entry.");
 			}
         }
-    }); 
+    });
 });
-$( ".sendMsg" ).click(function( event ) { 
- 
+$( ".sendMsg" ).click(function( event ) {
+
   event.preventDefault();
- 
+
  var message = $(this).prev().text();
   if(message != ""){
   $.ajax({
@@ -874,31 +930,31 @@ $( ".sendMsg" ).click(function( event ) {
         dataType: 'json',
         data: $('#MessageForm').serialize(),
         success: function(data) {
-			
+
 			$('#MessageForm textarea').val("");
 			closeModal('sendMessageForm');
-			
+
         }
     });
   }
-  
+
 });
-	
-$('input[type="checkbox"]').click(function(){	
-	
+
+$('input[type="checkbox"]').click(function(){
+
 	var checked = $(this).attr('checked');
-	
-	if(checked === undefined){
+
+	if(typeof checked === 'undefined'){
 		$(this).attr('checked','checked');
 		$(this).addClass('checked');
 		$(this).parent().addClass('checkBoxChecked');
-		
+
 	}else{
 		$(this).removeAttr('checked');
 		$(this).removeClass('checked');
 		$(this).parent().removeClass('checkBoxChecked');
-	}		
-	
+	}
+
 });
 
 function resetDailyChecklistForm(){
@@ -910,7 +966,7 @@ function resetDailyChecklistForm(){
 $('input[name="question6a"]').click(function(){$(this).next().trigger('click');});
 $('input[name="question8a"]').click(function(){$(this).next().trigger('click');});
 
-$( ".dailyChecklistFormSubmit" ).click(function( e ) { 
+$( ".dailyChecklistFormSubmit" ).click(function( e ) {
   e.preventDefault();
   $('.show-success-msg, .show-error-msg').css("display","none");
   //get values
@@ -923,14 +979,14 @@ $( ".dailyChecklistFormSubmit" ).click(function( e ) {
   var submittedby = $('input[name="submitby"]').val();
   var shift = $('input[name="shift"]').val();
   var flagged = true;
-  //console.log(line+" "+question6+" "+question7+" "+question8+" "+question9+" "+comment+" "+submittedby);  
+  //console.log(line+" "+question6+" "+question7+" "+question8+" "+question9+" "+comment+" "+submittedby);
 	var data = "line="+line+"&q6="+question6+"&q7="+question7+"&q8="+question8+"&q9="+question9+"&comment="+comment+"&submittedby="+submittedby+"&shift="+shift;
 	//if(line != '' && question6 != '', )
-		if(question6 == undefined){
+		if(typeof question6 === 'undefined'){
 			alert('Please select Die/Lip, Cast Roll Cleaning whether it is "Scheduled" or "Quality Issue".');
 			flagged = false;
 		}
-		if(question8 == undefined){
+		if(typeof question8 === 'undefined'){
 			alert('Please select changed blades whether it is "New Blades" or "Flipped".');
 			flagged = false;
 		}
@@ -946,24 +1002,24 @@ $( ".dailyChecklistFormSubmit" ).click(function( e ) {
 			alert('Please at least one of the items to be reported.');
 			flagged = false;
 		}
-		
+
 	if(flagged){
-		
+
 		$.ajax({
 			url: 'https://script.google.com/macros/s/AKfycbza85RHYVyl8LGMN6lmqw_8AESHPZ5dVnqRnV00BQba24U4RRI/exec?fromForm=checklist&'+data,
 			type: 'get',
 			dataType: 'json',
 			success: function(data) {
 				if(data.result === "success"){
-					$('.show-success-msg').css("display","block");				
+					$('.show-success-msg').css("display","block");
 					setTimeout(function(){$('.show-success-msg').css("display","none");}, 5000);
 					resetDailyChecklistForm();
 				}else{
-					$('.show-error-msg').css("display","block");				
+					$('.show-error-msg').css("display","block");
 					setTimeout(function(){$('.show-error-msg').css("display","none");}, 5000);
 				}
 			}
 		});
-		
+
 	}
 });
