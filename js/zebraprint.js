@@ -123,6 +123,27 @@ function writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints,c
 							"^FO530,195^A0N22,22^FD"+shiftTag+"^FS"+
 							"^XZ";
 			}else{
+				var dateToday = new Date();
+				dataToWrite = "^XA"+
+								"^PQ"+ noOfCopies +
+								"^CFA,30"+
+								"^FO80,40^A0N24,24^FD15312077PACKSYS MEXICO^FS"+
+								"^FO175,65^A0N24,24^FDSA DE CV.^FS"+
+								"^FO125,90^A0N28,28^FDGCAS: 90852754^FS"+
+								"^FO80,120^A0N30,30^FDLOTE-"+coretag+"^FS"+
+								"^FO95,150^A0N24,24^FDFETCHA DE PRODUCTION^FS"+
+								"^FO150,175^A0N28,28^FD"+dateToday.toLocaleDateString().replace(/(^|\D)(\d)(?!\d)/g, '$10$2')+"^FS"+
+								"^FO175,200^A0N24,24^FD"+orderCode.replace('ORD','')+"^FS"+
+
+								"^FO480,40^A0N24,24^FD15312077PACKSYS MEXICO^FS"+
+								"^FO575,65^A0N24,24^FDSA DE CV.^FS"+
+								"^FO525,90^A0N28,28^FDGCAS: 90852754^FS"+
+								"^FO480,120^A0N30,30^FDLOTE-"+coretag+"^FS"+
+								"^FO495,150^A0N24,24^FDFETCHA DE PRODUCTION^FS"+
+								"^FO550,175^A0N28,28^FD"+dateToday.toLocaleDateString().replace(/(^|\D)(\d)(?!\d)/g, '$10$2')+"^FS"+
+								"^FO575,200^A0N24,24^FD"+orderCode.replace('ORD','')+"^FS"+
+
+								"^XZ";
 				
 			}
 			
