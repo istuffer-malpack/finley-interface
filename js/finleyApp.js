@@ -374,12 +374,13 @@ app.directive('autoComplete', function($timeout) {
 					ppp = 'MADE IN CANADA'+
 							'<div class="skid_label_lot" style="width: 20%;font-size: initial;margin-left:40%;">'+										 
 											'<div class="ct center-aligned '+((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
-												'<div class="coretag">'+ctag+'</div>'+
+												'<div class="coretag">'+utag+'</div>'+
 												'<div class="madeInCanada">MADE IN CANADA</div>'+
 													'<div class="arrow-yr">'+
 														'<img class="arrow" src="./img/arrow.png" alt="--> --> -->">'+
 														'<span class="">'+$scope.yr+'</span>'+
-													'</div>'+			
+													'</div>'+
+													'<div class="orderNumber ng-binding">'+ctag+'</div>'+
 													'<div class="orderNumber ng-binding">'+orderLabel+'</div>'+
 													'<div class="shift ng-binding">'+timeLabel+'</div>'+
 											'</div>'+			
