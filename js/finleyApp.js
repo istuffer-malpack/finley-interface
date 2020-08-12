@@ -310,7 +310,7 @@ app.directive('autoComplete', function($timeout) {
 			$scope.ulineTags = function(prod_id,totalSkid,customLabel){return (customLabel == "Uline") ? getCoreTag(prod_id,totalSkid) : ""};
 			$scope.timestamped = function(linenum){return $scope.currentTime.toLocaleTimeString() + ' ' + ((localStorage.shift).split("/")[1]).replace("Shift ","") + '00' + linenum.replace("LINE ","")};
 				
-			$scope.printLabel = function(custname,proddesc,noOfskids,qty,uom,ponum,productid){
+			$scope.printLabel = function(custname,proddesc,noOfskids,qty,uom,ponum,productid,orderno){
 				productid = productid.toUpperCase();
 				$('#printLabel').html('');
 				var htmlContent = '';
@@ -338,250 +338,100 @@ app.directive('autoComplete', function($timeout) {
 						if(test.indexOf('FILM') <= -1){
 							pp = test.substring(0,test.indexOf('CORE') + 4);
 						}
-						ppp = test.replace(p,"").replace(pp,"").replace(/#PLBL/g,"").replace(/#1INCORE/g,"").replace(/STD/g,"");
+						ppp = test.replace(p,"").replace(pp,"").replace(/#PLBL/g,"").replace(/#1INCORE/g,"").replace(/STD/g,"").replace("#","");
 				}
 
-
+				var l = document.getElementById('machineLine').value;
+				var timeLabel = $scope.timestamped(l);
 				var pt = productid.slice(0,4);
 				var ctag = getCoreTag(productid,noOfskids);
 				var utag = ulineCode[productid];
-
-				switch (pt){
-					case 'AX-M':
-
-						for(var i=0;i<noOfskids;i++){
-							htmlContent += '<div class="">'+
-												'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
-												'<div class="costumer">'+
-													'<h1>'+custname+'</h1>'+
-												'</div>'+
-												'<div class="product">'+
-													'<p>'+ppp+'</p>'+
-												'</div>'+
-												'<div class="made">'+
-													'<div class="">'+
-														'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
-													'</div>'+
-													'<div class="lot-box">'+
-														'<h5>Lot Number:</h5>'+
-														'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
-													'</div>'+
-													'<div>'+
-														'<p class="po">P.O.# '+ponum+'</p>'+
-														'<p class="madeincanada">MADE IN CANADA</p>'+
-													'</div>'+
-													'<div class="footer"><img src=\"./img/AX-FOOTER.jpg\"/></div>'+
-													'<div class="counter">'+
-														'<span>'+(i+1)+'</span>'+
-														'<span>'+noOfskids+'</span>'+
-													'</div>'+
-												'</div>'+
-											'</div>';
-						}
+				var orderLabel = orderno + "" + (((productid.split("-")[5]).indexOf('00') > -1 || (productid.split("-")[5]).indexOf('Q0') > -1 ||	(productid.split("-")[5]).indexOf('C0') > -1 || (productid.split("-")[5]).indexOf('P0') > -1 ||	(productid.split("-")[5]).indexOf('N0') > -1) ? "" : productid.split("-")[5]);
+			
+				if(proddesc.indexOf('MAX 80') > -1){pt += '80';}
+				var labelLogo = '<img src="./img/'+pt+'.jpg" alt="" style="height:180px;display:block;margin:10px auto;">';	
+				var footerLogo = '<img src="./img/AX-FOOTER.jpg" style="height:75px;width:100%;">';
+				var coretaglabel = '<div class="skid_label_lot three columns">'+
+											'<div class="ct center-aligned '+((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
+												'<div class="coretag">'+ctag+'</div>'+
+												'<div class="madeInCanada">MADE IN CANADA</div>'+
+													'<div class="arrow-yr">'+
+														'<img class="arrow" src="./img/arrow.png" alt="--> --> -->">'+
+														'<span class="">'+$scope.yr+'</span>'+
+													'</div>'+			
+													'<div class="orderNumber ng-binding">'+orderLabel+'</div>'+
+													'<div class="shift ng-binding">'+timeLabel+'</div>'+
+											'</div>'+			
+										'</div>'+
+										'<div class="center-aligned seven columns">'+
+								'<span class="skid_label_po_number row" style="font-size:55px;padding: 0;margin: 0;line-height: 1;">P.O.# '+ponum+'</span>';
+				var qtylabel = '<span class="skid_label_qty center-aligned row">'+(qty/noOfskids) +' '+ uom +'S/SKID</span>'+				
+							   '<span class="skid_label_made center-aligned row">MADE IN CANADA</span>	';
+				if(typeof utag !== 'undefined'){					
+					labelLogo = '<span style="font-size: 190px;font-weight: 700;line-height: .8;">'+utag+'</span>';
+					footerLogo = '';
+					custname = ppp;
+					ppp = 'MADE IN CANADA'+
+							'<div class="skid_label_lot" style="width: 20%;font-size: initial;margin-left:40%;">'+										 
+											'<div class="ct center-aligned '+((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
+												'<div class="coretag">'+ctag+'</div>'+
+												'<div class="madeInCanada">MADE IN CANADA</div>'+
+													'<div class="arrow-yr">'+
+														'<img class="arrow" src="./img/arrow.png" alt="--> --> -->">'+
+														'<span class="">'+$scope.yr+'</span>'+
+													'</div>'+			
+													'<div class="orderNumber ng-binding">'+orderLabel+'</div>'+
+													'<div class="shift ng-binding">'+timeLabel+'</div>'+
+											'</div>'+			
+										'</div>';
+					coretaglabel = '<div class="center-aligned ten columns" style="margin-top:35px;">'+
+								'<span class="skid_label_po_number row" style="font-size:55px;padding: 0;margin: 0;line-height: 1.5;padding-left: 25%;">P.O.# '+ponum+'</span>'+
+								'<img class="uline-barcode barcode" style="margin-left: 25%;"/>';
+					qtylabel = '';
+				}
+				
+				switch (pt)
+				{
+					case 'AX-M':						
 						paperColor = 'blue';
 						break;
-
-					case 'PL-M':
-
-						for(var i=0;i<noOfskids;i++){
-
-                      if(typeof utag !== 'undefined'){
-                        htmlContent += '<div class="">'+
-      														'<div class="product-logo" style="font-size:200px;font-size: 200px;font-weight:700;padding:0;line-height:.8;">'+utag+'</div>'+
-      														'<div class="costumer">'+
-      															'<h1 style="font-size:84px;line-height:.8;">'+ppp+'</h1>'+
-      														'</div>'+
-      														'<div class="" style="margin-top:-20px;">'+
-      															'<p class="h2" style="font-size:58px;">MADE IN CANADA</p>'+
-      														'</div>'+
-      														'<div class="made">'+
-      															'<div class="lot-box middle '+ ((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
-      																'<h5>Lot Number:</h5>'+
-      																'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
-      															'</div>'+
-      															'<div class="" style="margin-top:-15px;">'+
-      																'<p class="po">P.O.# '+ponum+'</p>'+
-      															'</div>'+
-      															'<div>'+
-      																'<p class="big" style="margin-top:-15px;">'+
-      																	'<img class="uline-barcode barcode" />'+
-      																'</p>'+
-      															'</div>'+
-      															'<div class="counter">'+
-      																'<span>'+(i+1)+'</span>'+
-      																'<span>'+noOfskids+'</span>'+
-      															'</div>'+
-      														'</div>'+
-      													'</div>';
-                      }else{
-                        htmlContent += '<div class="">'+
-                                  '<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
-                                  '<div class="costumer">'+
-                                    '<h1>'+custname+'</h1>'+
-                                  '</div>'+
-                                  '<div class="product">'+
-                                    '<p>'+ppp+'</p>'+
-                                  '</div>'+
-                                  '<div class="made">'+
-                                    '<div class="">'+
-                                      '<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
-                                    '</div>'+
-                                    '<div class="lot-box">'+
-                                      '<h5>Lot Number:</h5>'+
-                                      '<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
-                                    '</div>'+
-                                    '<div>'+
-                                      '<p class="po">P.O.# '+ponum+'</p>'+
-                                      '<p class="madeincanada">MADE IN CANADA</p>'+
-                                    '</div>'+
-                                    '<div class="footer"><img src=\"./img/AX-FOOTER.jpg\"/></div>'+
-                                    '<div class="counter">'+
-                                      '<span>'+(i+1)+'</span>'+
-                                      '<span>'+noOfskids+'</span>'+
-                                    '</div>'+
-                                  '</div>'+
-                                '</div>';
-
-
-                      }
-						}
+					case 'PL-M':						
 						paperColor = 'green';
 						break;
-
-					case 'PR-M':
-
-						if(proddesc.indexOf('MAX 80') > -1){pt += '80';}
-
-						for(var i=0;i<noOfskids;i++){
-							htmlContent += '<div class="">'+
-												'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt=""/></div>'+
-												'<div class="costumer">'+
-													'<h1>'+custname+'</h1>'+
-												'</div>'+
-												'<div class="product">'+
-													'<p>'+ppp+'</p>'+
-												'</div>'+
-												'<div class="made">'+
-													'<div class="">'+
-														'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
-													'</div>'+
-													'<div class="lot-box">'+
-														'<h5>Lot Number:</h5>'+
-														'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
-													'</div>'+
-													'<div>'+
-														'<p class="po">P.O.# '+ponum+'</p>'+
-														'<p class="madeincanada">MADE IN CANADA</p>'+
-													'</div>'+
-
-													'<div class="counter">'+
-														'<span>'+(i+1)+'</span>'+
-														'<span>'+noOfskids+'</span>'+
-													'</div>'+
-												'</div>'+
-											'</div>';
-						}
+					case 'PR-M':						
+						footerLogo = '';
 						paperColor = 'yellow';
+						
 					break;
-
 					default:
-
-					  if(typeof utag === 'undefined'){
-							if(pt == "VX-H"){
-								for(var i=0;i<noOfskids;i++){
-									htmlContent += '<div class="">'+
-														'<div class="product-logo" style="text-align:center; font-size: 120px;font-weight:700;line-height:1.1;">FULLER ROAD</div>'+
-
-														'<div class="product">'+
-															'<p style="font-size:85px;">'+ppp.replace("CONVERSION ROLL ","")+'</p>'+
-														'</div>'+
-														'<div class="made">'+
-															'<div class="">'+
-																'<p style="font-size: 85px;">'+ordernumber+'</p>'+
-																'<p class="big" style="font-size:65px; line-height:1.1;">VMAXX HAND FILM</p>'+
-																'<p class="big" style="font-size:65px; line-height:1.1;">CONVERSION ROLLS</p>'+
-															'</div>'+
-															'<div>'+
-																'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
-
-															'</div>'+
-															'<div class="counter down">'+
-																'<span>'+(i+1)+'</span>'+
-																'<span>'+noOfskids+'</span>'+
-															'</div>'+
-														'</div>'+
-													'</div>';
-								}
-
-							}else{
-								for(var i=0;i<noOfskids;i++){
-									htmlContent += '<div class="">'+
-														'<div class="product-logo"><img src="./img/'+pt+'.jpg" alt="" /></div>'+
-														'<div class="costumer">'+
-															'<h1>'+custname+'</h1>'+
-														'</div>'+
-														'<div class="product">'+
-															'<p>'+ppp+'</p>'+
-														'</div>'+
-														'<div class="made">'+
-															'<div class="lot-box middle '+ ((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
-																'<h5>Lot Number:</h5>'+
-																'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
-															'</div>'+
-															'<div class="">'+
-																'<p class="po">P.O.# '+ponum+'</p>'+
-															'</div>'+
-															'<div>'+
-																'<p class="qty">'+(qty/noOfskids) +' '+ uom +'S/SKID</p>'+
-																'<p class="madeincanada">MADE IN CANADA</p>'+
-															'</div>'+
-															'<div class="counter">'+
-																'<span>'+(i+1)+'</span>'+
-																'<span>'+noOfskids+'</span>'+
-															'</div>'+
-														'</div>'+
-													'</div>';
-								}
-							}
-
-
-						}else{
-
-							for(var i=0;i<noOfskids;i++){
-									htmlContent += '<div class="">'+
-														'<div class="product-logo" style="font-size:200px;font-size: 200px;font-weight:700;line-height:1;padding:0;line-height:.8;">'+utag+'</div>'+
-														'<div class="costumer">'+
-															'<h1 style="font-size:82px;line-height:1.1;">'+ppp+'</h1>'+
-														'</div>'+
-														'<div class="">'+
-															'<p class="h2" style="font-size:58px;">MADE IN CANADA</p>'+
-														'</div>'+
-														'<div class="made">'+
-															'<div class="lot-box middle '+ ((pt.indexOf("H") > -1) ? "no-lot-box" : "") +'">'+
-																'<h5>Lot Number:</h5>'+
-																'<h4>'+ctag+  '<span class="yrcode">'+$scope.yr+'</span></h4>'+
-															'</div>'+
-															'<div class="">'+
-																'<p class="po">P.O.# '+ponum+'</p>'+
-															'</div>'+
-															'<div>'+
-																'<p class="big">'+
-																	'<img class="uline-barcode barcode" />'+
-																'</p>'+
-															'</div>'+
-															'<div class="counter">'+
-																'<span>'+(i+1)+'</span>'+
-																'<span>'+noOfskids+'</span>'+
-															'</div>'+
-														'</div>'+
-													'</div>';
-								}
-
-
-						}
-
+						footerLogo = '';
 						paperColor = 'white';
 				}
+				
+				for(var i=0;i<noOfskids;i++){
+					htmlContent += '<div class="container w-100 no-margin no-padding" style="margin: 0 auto;">'+
+									'<div class="skid_label_logo center-aligned row">'+									
+										labelLogo +										
+									'</div>'+
+									'<div class="skid_label_customer center-aligned row">'+custname+'</div>'+
+									'<div class="skid_label_product_desc center-aligned row" style="font-size:65px;">'+
+										ppp+
+									'</div>'+
+									'<div class="skid_label_po row">'+
+										coretaglabel +														
+											qtylabel +		
+										'</div>'+
+										'<div class="skid_label_counter two columns" style="position: relative;">'+
+											'<span class="top">'+(i+1)+'</span><span class="bottom">'+noOfskids+'</span>'+
+										'</div>' +
+									'</div>'+
+									'<div class="skid_label_footer row">'+
+										footerLogo+
+									'</div>'+
+								'</div>';
+					
+				}
+				
 
 					$('#printLabel').append(htmlContent);
 
@@ -737,17 +587,17 @@ jQuery.fn.extend({
 	 }else if(a == 'skidTags1'){
 		css = '@page { size: 11in 8.5in; margin-top: 3.5cm;}body{background: #ffffff!important;width:920px;height: 600px;}';
 	 }else if(a == 'skidLabel'){
-		 css = '@page { size: 11in 8.5in;margin:1cm 5mm;}body{background: #ffffff!important;width:980px;height: 600px;color:#000;font-family:"Times New Roman"!important;}'+
-				'.container1 *{margin:0;padding:0;}.container1{width:100%;font-weight:600;text-align:center;padding:15px 0 0;margin:0;page-break-inside:avoid;}'+
-				'.costumer{margin-bottom: 25px;}h1{font-size:72px;line-height:1.1;text-transform:uppercase;font-weight:700;margin-top:15px;}'+
-				'.product p{font-size:80px;line-height:1.1;margin-bottom: 30px;}.po{font-size:65px;}.made{position:relative;}.qty{font-size: 60px;line-height:1.1;margin-top:25px;}'+
-				'.made .madeincanada{font-size: 36px;margin-top:-15px;}.made .counter{position:absolute;right: -30px;top: 55px;}.counter.down{top:100px;margin-bottom:20px;}'+
-				'.lot-box{position:absolute; left:0;top:50px;padding:10px; text-align:center; border-style: double; }.lot-box.middle{position:relative;top:-20px;margin: 15px auto 0;width: 250px;}.lot-box.middle.no-lot-box{display:none;}'+
-				'.h2{font-size:55px;font-weight:700;margin:0}h5{font-weight:700;font-size: 1.5em;}h4{font-weight:700;font-size:1.75em;margin:10px;}h5 span{padding-left:10px}'+
-				'.product-logo{padding-top:0px}.product-logo img{height:120px;width:90%;display:block;margin:-15px auto 5px}'+
-				'.footer img{height:80px;display:block;margin:50px auto 0;width:75%;}.yrcode{margin-left: 25px;}.big{font-size:50px;font-weight:700;margin:0}'+
-				'.counter span{display:block;padding:10px 50px;font-size:50px;border:1px solid #000;}.counter span+span{margin-top:-1px;}'+
-				'.underlined{text-decoration: underline;}';
+		 css = '@page { size: 11in 8.5in;margin:1cm 5mm;}body{background: #ffffff!important;color:#000;font-family:"Times New Roman"!important;}'+
+				'.skid_label{font-family: "times new roman";}.skid_label_logo{height:200px;}.skid_label_customer{height:147px;font-size:72px;line-height:1;font-weight:700;}'+
+				'.skid_label_product_desc{height:133px;font-weight:700;line-height: .9;}'+
+				'.skid_label_po{height:80px;font-weight:700;}'+
+				'.skid_label_lot{position: relative;}.skid_label_lot .ct{padding: 15px;border: 1px solid #000;border-radius: 20px;}'+
+				'.skid_label_lot .arrow{width: 64px!important;}'+
+				'.skid_label_qty{font-weight:700;line-height: 1.1;font-size:40px;font-weight:700;}'+
+				'.skid_label_made{font-weight:700;line-height: .9;font-size:32px;font-weight:700;}'+
+				'.skid_label_footer{padding: 10px 0;}'+
+				'.skid_label_counter span{display: block;font-size: 70px;border: 1px solid #000;position: absolute;line-height: .8;padding: 10px 32px;text-align: center;left: 35%;min-width:78px;}'+
+				'.skid_label_counter span.bottom{top: 77px;}.skid_label_lot .ct.no-lot-box{color:#fff;border: 1px solid #fff;}.skid_label_lot .ct.no-lot-box .arrow{display:none;}';
 	 }
 
 	style.type = 'text/css';
