@@ -217,7 +217,7 @@ app.directive('autoComplete', function($timeout) {
 				custid = custid.toUpperCase();
 				$scope.coretag = (custid == "ULINEC" || custid == "ULINE") ? ulineCode[prodID] : getCoreTag(prodID,qty);
 				$scope.ulinetag = (custid == "ULINEC" || custid == "ULINE") ? getCoreTag(prodID,qty) : "";
-				$scope.isUline = (custid == "ULINEC" || custid == "ULINE") ? "Uline" : ((custid == "MORRIS" || custid == "PXYS") ? "Custom" : "Standard");
+				$scope.isUline = (custid == "ULINEC" || custid == "ULINE") ? "Uline" : ((custid == "MORRIS" || (custid == "PXYS" && prodID=='PR-M-500-051-5000-Q050')) ? "Custom" : "Standard");
 				$scope.productId = prodID;
 				$scope.customerID = custid;
 				$scope.ordnumber = ordernum;
