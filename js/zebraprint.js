@@ -122,7 +122,7 @@ function writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints,c
 							"^FO"+((orderCode.length > 11) ? 510 : 535)+",167^A0N28,28^FD"+orderCode+"^FS"+
 							"^FO530,195^A0N22,22^FD"+shiftTag+"^FS"+
 							"^XZ";
-			}else if((customerName.toUpperCase().indexOf('PXYS') > -1 || customerName.toUpperCase().indexOf('PACKSYS') > -1) && productId =='PR-M-500-051-5000-Q050'){
+			}else{
 				var dateToday = new Date();
 				dataToWrite = "^XA"+
 								"^PQ"+ noOfCopies +
@@ -145,23 +145,6 @@ function writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints,c
 
 								"^XZ";
 				
-			}else{
-				dataToWrite = "^XA"+
-							"^PQ" + noOfCopies +
-							"^CFA,30"+
-							"^FO75,55^A0N42,42^FD"+coretag+"^FS"+
-							"^FO125,95^A0N24,24^FDMADE IN CANADA^FS"+
-							"^FO140,120^GFA,195,195,13,L08M06M01,L0CM06M018,L0EM07M01C,L0FM078L01E,L0F8L07CL01F,0LFC0LFE01LF8,0LFE0MF03LFC,0MF0MF83LFE,0LFE0MF03LFC,0LFC0LFE03LF8,L0F8L07CL01F,L0FM078L01E,L0EM07M01C,L0CM06M018,L08M06M01,^FS"+
-							"^FO255,119^A0N20,20^FD20 ^FS"+
-							"^FO"+((orderCode.length > 11) ? 80 : 120)+",143^A0N34,34^FD"+orderCode+"^FS"+   // 75 FOR OSC1
-							"^FO135,175^A0N22,22^FD"+shiftTag+"^FS"+
-							"^FO475,55^A0N42,42^FD"+coretag+"^FS"+
-							"^FO525,95^A0N24,24^FDMADE IN CANADA^FS"+
-							"^FO540,120^GFA,195,195,13,L08M06M01,L0CM06M018,L0EM07M01C,L0FM078L01E,L0F8L07CL01F,0LFC0LFE01LF8,0LFE0MF03LFC,0MF0MF83LFE,0LFE0MF03LFC,0LFC0LFE03LF8,L0F8L07CL01F,L0FM078L01E,L0EM07M01C,L0CM06M018,L08M06M01,^FS"+
-							"^FO655,119^A0N20,20^FD20 ^FS"+
-							"^FO"+((orderCode.length > 11) ? 480 : 520)+",143^A0N34,34^FD"+orderCode+"^FS"+ //475 FOR OSC1
-							"^FO535,175^A0N22,22^FD"+shiftTag+"^FS"+
-							"^XZ";
 			}
 			
 
