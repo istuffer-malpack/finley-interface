@@ -122,7 +122,7 @@ function writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints,c
 							"^FO"+((orderCode.length > 11) ? 510 : 535)+",167^A0N28,28^FD"+orderCode+"^FS"+
 							"^FO530,195^A0N22,22^FD"+shiftTag+"^FS"+
 							"^XZ";
-			}else{
+			}else if((customerName.toUpperCase().indexOf('PXYS') > -1 || customerName.toUpperCase().indexOf('PACKSYS') > -1) && productId =='PR-M-500-051-5000-Q050'){
 				var dateToday = new Date();
 				dataToWrite = "^XA"+
 								"^PQ"+ noOfCopies +
