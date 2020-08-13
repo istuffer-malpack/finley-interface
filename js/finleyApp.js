@@ -177,7 +177,37 @@ app.directive('autoComplete', function($timeout) {
 				$scope.ulinetag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? getCoreTag(data.PRODUCT_ID,data.SKID_QTY) : '';
 
 				document.querySelector('.recipe').innerHTML = '<table style="margin: 0 auto;"><tbody>'+data.RECIPECODE+'</tbody></table>';
+				var oCodeSuffix = ((data.PRODUCT_ID.split("-")[5]).indexOf('00') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('Q0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('C0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('P0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('N0') > -1) ? "" : data.PRODUCT_ID.split("-")[5];
 
+				var oCode = data.ORDER_NUMBER+''+oCodeSuffix;
+				var tDiv = $('#jobOrderModal .coretag-label').html();
+				if((data.CUSTOMERID == "PXYS" && data.PRODUCT_ID=='PR-M-500-051-5000-Q050')){
+					tDiv = 	'<div class="row madeInCanada" style="line-height:1.1;">'+
+							'<span>15312077PACKSYS MEXICO</span><br><span>SA DE CV.</span></div>'+
+								'<div class="row arrow-yr">'+
+									'<span class="year">GCAS: 90852754</span>'+
+								'</div>'+
+								'<div class="row ulineCode">LOTE-'+$scope.coretag+'</div>'+
+								'<div class="row orderNumber ng-binding">FECHA DE PRODUCTION</div>'+
+								'<div class="row shift"><span>'+$scope.currentTime.toLocaleDateString().replace(/(^|\D)(\d)(?!\d)/g, '$10$2')+
+								'</span><br><span>'+oCode.replace("ORD","")+'</span></div>';
+							
+				}else{
+					tDiv = '<div class="row coretag ng-binding">'+$scope.coretag+'</div>'+
+							'<div class="row madeInCanada">MADE IN CANADA</div>'+
+							'<div class="row arrow-yr">'+
+								'<img class="arrow" src="./img/arrow.png" alt="--> --> -->">'+
+								'<span class="year ng-binding">'+$scope.yr+'</span>'+
+							'</div>'+
+							'<div class="row ulineCode ng-binding">'+$scope.ulinetag+'</div>'+
+							'<div class="row text-bold ng-binding" style="line-height: 1;">'+
+							(data.CUSTOMERID == "MORRIS" ? splitProductID(data.PRODUCT_ID,2) + "MM " + Number(splitProductID(data.PRODUCT_ID,3)) + "GA " + splitProductID(data.PRODUCT_ID,4) + "'" : "")+'</div>'+
+							'<div class="row orderNumber ng-binding">'+oCode+'</div>'+
+							'<div class="row shift ng-binding">'+$scope.timestamped(data.SCHEDULED_LINE)+'</div>';
+						
+				}
+				
+				$('#jobOrderModal .coretag-label').html(tDiv);
 				var modal = document.getElementById("jobOrderModal");
 				modal.style.display = "block";
 			};
@@ -227,7 +257,35 @@ app.directive('autoComplete', function($timeout) {
 				$scope.orderCode = "ORD"+ordernum.toString().toLowerCase().replace("ord","") +""+suffix;
 				$scope.noOfPrints = parseInt(nPrints) + 20;
 				$scope.linenumber = (typeof lineNumber === 'undefined') ? $scope.linen : lineNumber;
-
+				
+				var tDiv = $('#coreTagPrint .coretag-label').html();
+				if((custid == "PXYS" && prodID=='PR-M-500-051-5000-Q050')){
+					tDiv = 	'<div class="row madeInCanada" style="line-height:1.1;">'+
+							'<span>15312077PACKSYS MEXICO</span><br><span>SA DE CV.</span></div>'+
+								'<div class="row arrow-yr">'+
+									'<span class="year">GCAS: 90852754</span>'+
+								'</div>'+
+								'<div class="row ulineCode">LOTE-'+$scope.coretag+'</div>'+
+								'<div class="row orderNumber ng-binding">FECHA DE PRODUCTION</div>'+
+								'<div class="row shift"><span>'+$scope.currentTime.toLocaleDateString().replace(/(^|\D)(\d)(?!\d)/g, '$10$2')+
+								'</span><br><span>'+$scope.orderCode.replace("ORD","")+'</span></div>';
+							
+				}else{
+					tDiv = '<div class="row coretag ng-binding">'+$scope.coretag+'</div>'+
+							'<div class="row madeInCanada">MADE IN CANADA</div>'+
+							'<div class="row arrow-yr">'+
+								'<img class="arrow" src="./img/arrow.png" alt="--> --> -->">'+
+								'<span class="year ng-binding">'+$scope.yr+'</span>'+
+							'</div>'+
+							'<div class="row ulineCode ng-binding">'+$scope.ulinetag+'</div>'+
+							'<div class="row text-bold ng-binding" style="line-height: 1;">'+
+							(custid == "MORRIS" ? splitProductID(prodID,2) + "MM " + Number(splitProductID(prodID,3)) + "GA " + splitProductID(prodID,4) + "'" : "")+'</div>'+
+							'<div class="row orderNumber ng-binding">'+$scope.orderCode+'</div>'+
+							'<div class="row shift ng-binding">'+$scope.timestamped($scope.linenumber)+'</div>';
+						
+				}
+				
+				$('#coreTagPrint .coretag-label').html(tDiv);
 				var modal = document.getElementById("coreTagPrint");
 				modal.style.display = "block";
 
