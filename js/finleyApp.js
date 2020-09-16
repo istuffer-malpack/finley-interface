@@ -890,7 +890,7 @@ $( ".dailyChecklistFormSubmit" ).click(function( e ) {
   var shift = $('input[name="shift"]').val();
   var flagged = true;
   //console.log(line+" "+question6+" "+question7+" "+question8+" "+question9+" "+comment+" "+submittedby);
-	var data = "line="+line+"&q6="+question6+"&q7="+question7+"&q8="+question8+"&q9="+question9+"&comment="+comment+"&submittedby="+submittedby+"&shift="+shift;
+	var data = "line="+line+"&q6="+question6+"&q7="+question7+"&q8="+question8+"&q9="+question9+"&comment=" + escape(comment) + "&submittedby="+submittedby+"&shift="+shift;
 	//if(line != '' && question6 != '', )
 		if(typeof question6 === 'undefined'){
 			alert('Please select Die/Lip, Cast Roll Cleaning whether it is "Scheduled" or "Quality Issue".');
