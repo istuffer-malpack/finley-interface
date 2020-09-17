@@ -933,4 +933,4 @@ $( ".dailyChecklistFormSubmit" ).click(function( e ) {
 
 	}
 });
-$('tbody tr:last-of-type').css('display','none');
+
