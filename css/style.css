@@ -1253,5 +1253,5 @@ input:checked + .slider:before {
     opacity: 0;
   }
 }
-tbody tr:last-of-type{display:none;}
+/*tbody tr:last-of-type{display:none;}*/
 
