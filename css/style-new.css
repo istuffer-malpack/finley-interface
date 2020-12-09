@@ -211,9 +211,9 @@ select:focus{
 	padding: 0;
 	border-radius: 0;
 }
-#job_order{
+/*#job_order{
 	margin: 0 15%;
-}
+}*/
 #job_order .ui.segment{
 	border: 1px solid #000!important;
 }
