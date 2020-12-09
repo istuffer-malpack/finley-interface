@@ -634,6 +634,27 @@ app.directive('autoComplete', function($timeout) {
 	}
 ]);
 
+
+function showModal(ele){
+	$('.ui.modal.'+ele).modal({
+        onHide: function(){
+            $('#printcss').remove();
+			$('.ui.modal.'+ele+' input').val("");
+			$('.ui.modal.'+ele+' textarea').val("");
+			$('.ui.modal.'+ele+' select').prop('selectedIndex',0);
+			$('.ui.modal input[type=checkbox], .ui.modal input[type=radio]').prop('checked',false);
+		
+		if(ele == 'daily_operator_checklist'){
+			$('.main_question').trigger('change');
+		}
+			
+        }
+    }).modal('show');
+	//var pos = $('.ui.modal.'+ele).position().left;
+			//$('.ui.modal.'+ele).css("left",pos);
+}
+
+
 function printBarcode(skidnumber,prodid,qty){
 	var noOfCopies = 0;
 	var orderNumber = '';
