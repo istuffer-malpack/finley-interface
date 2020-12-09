@@ -21,7 +21,7 @@ nav.ui.grid.top{
 .ui.card{
 	min-height: 180px;
 }
-.ui.mini.modal, .ui.tiny.modal{
+.ui.mini.modal, .ui.tiny.modal, .ui.large.modal{
 	position: fixed;
     top: 15%;
 	/* left: 22%; */
