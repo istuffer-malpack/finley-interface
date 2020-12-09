@@ -888,7 +888,7 @@ $( ".sendMsg" ).click(function( event ) {
 
  var message = $(this).prev().text();
   if(message != ""){
-  $.ajax({
+   $.ajax({
         url: 'https://script.google.com/macros/s/AKfycbza85RHYVyl8LGMN6lmqw_8AESHPZ5dVnqRnV00BQba24U4RRI/exec',
         type: 'get',
         dataType: 'json',
@@ -914,24 +914,24 @@ $('.main_question').change(function(){
 		$('.'+ele).css('display','none');
 	}
 });
-/* function resetDailyChecklistForm(){
+ function resetDailyChecklistForm(){
 	$('#dailyChecklistForm input').removeAttr('checked').removeClass('checked');
 	$('#dailyChecklistForm label').removeClass('checkBoxChecked');
 	$('#dailyChecklistForm select, #dailyChecklistForm textarea, #dailyChecklistForm input[name="submitby"]').val('');
 }
 
 $('input[name="question6a"]').click(function(){$(this).next().trigger('click');});
-$('input[name="question8a"]').click(function(){$(this).next().trigger('click');}); */
+$('input[name="question8a"]').click(function(){$(this).next().trigger('click');}); 
 
-/* $( ".dailyChecklistFormSubmit" ).click(function( e ) {
+ $( ".dailyChecklistFormSubmit" ).click(function( e ) {
   e.preventDefault();
   $('.show-success-msg, .show-error-msg').css("display","none");
   //get values
   var line = $('#lineDropdown').find(':selected').val();
-  var question6 = ($('input[name="question6"]').hasClass('checked')) ? $('input[name="question6a"].checked').val() : "";
-  var question7 = ($('input[name="question7"]').hasClass('checked')) ? $('input[name="question7"]').val() : "";
-  var question8 = ($('input[name="question8"]').hasClass('checked')) ? $('input[name="question8a"].checked').val() : "";
-  var question9 = ($('input[name="question9"]').hasClass('checked')) ? $('input[name="question9"]').val() : "";
+  var question6 = ($('input[name="question6"]').hasClass('checked')) ? $('input[name="question6a"]').val() : "";
+  var question7 = $('input[name="question7"]').val();
+  var question8 = ($('input[name="question8"]').hasClass('checked')) ? $('input[name="question8a"]').val() : "";
+  var question9 = $('input[name="question9"]').val();
   var comment = $('textarea[name="comment"]').val();
   var submittedby = $('input[name="submitby"]').val();
   var shift = $('input[name="shift"]').val();
@@ -939,6 +939,8 @@ $('input[name="question8a"]').click(function(){$(this).next().trigger('click');}
   //console.log(line+" "+question6+" "+question7+" "+question8+" "+question9+" "+comment+" "+submittedby);
 	var data = "line="+line+"&q6="+question6+"&q7="+question7+"&q8="+question8+"&q9="+question9+"&comment=" + escape(comment) + "&submittedby="+submittedby+"&shift="+shift;
 	//if(line != '' && question6 != '', )
+	
+	//console.log(data);
 		if(typeof question6 === 'undefined'){
 			alert('Please select Die/Lip, Cast Roll Cleaning whether it is "Scheduled" or "Quality Issue".');
 			flagged = false;
@@ -979,4 +981,4 @@ $('input[name="question8a"]').click(function(){$(this).next().trigger('click');}
 		});
 
 	}
-}); */
+}); 
