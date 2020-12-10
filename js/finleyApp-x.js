@@ -1003,3 +1003,7 @@ $('input[name="question8a"]').click(function(){$(this).next().trigger('click');}
 
 	}
 }); 
+
+$(document).ready(function(){
+	$('.modal').prepend('<i class="close inside" style="font-weight:700;font-style:normal">X</i>');
+});
