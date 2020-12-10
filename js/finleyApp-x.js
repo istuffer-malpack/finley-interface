@@ -962,7 +962,7 @@ $('input[name="question8a"]').click(function(){$(this).next().trigger('click');}
 	//if(line != '' && question6 != '', )
 	
 	//console.log(data);
-		if(typeof question6 === 'undefined'){
+	/*	if(typeof question6 === 'undefined'){
 			alert('Please select Die/Lip, Cast Roll Cleaning whether it is "Scheduled" or "Quality Issue".');
 			flagged = false;
 		}
@@ -981,7 +981,7 @@ $('input[name="question8a"]').click(function(){$(this).next().trigger('click');}
 		if(question6 == '' && question7 == '' && question8 == '' && question9 ==''){
 			alert('Please at least one of the items to be reported.');
 			flagged = false;
-		}
+		}*/
 
 	if(flagged){
 
