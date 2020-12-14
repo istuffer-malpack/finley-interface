@@ -32,7 +32,8 @@ nav.ui.grid.top{
     margin: 0em 0em 0em 0em;
 }
 .ui.fullscreen.modal{
-	left: 2.5%!important;
+   width: 1760px;
+   /*left: 2.5%!important;*/
 }
 .ui.neon-green.text{
 	color: #39ff14;
