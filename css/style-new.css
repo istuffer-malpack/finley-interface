@@ -31,7 +31,10 @@ nav.ui.grid.top{
     width: 1440px;
     margin: 0em 0em 0em 0em;
 }
-.ui.fullscreen.modal{
+.ui.fullscreen.modal{   
+   left: 2.5%!important;
+}
+.ui.x-large.modal{
    width: 1760px!important;
    /*left: 2.5%!important;*/
 }
