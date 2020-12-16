@@ -638,8 +638,10 @@ app.directive('autoComplete', function($timeout) {
 function showModal(ele){
 	$('.ui.modal.'+ele).modal({
         onHide: function(){
-            $('#printcss').remove();
+            		$('#printcss').remove();
+		if(ele != 'coreTagPrint'){
 			$('.ui.modal.'+ele+' input').val("");
+		}
 			$('.ui.modal.'+ele+' textarea').val("");
 			$('.ui.modal.'+ele+' select').prop('selectedIndex',0);
 			$('.ui.modal input[type=checkbox], .ui.modal input[type=radio]').prop('checked',false);
