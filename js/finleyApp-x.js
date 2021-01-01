@@ -62,7 +62,7 @@ app.directive('autoComplete', function($timeout) {
 			$scope.currentTime = new Date();
 			var sdate = $scope.currentTime;
 			$scope.weekAgo = sdate.setDate(sdate.getDate() - 7);
-			$scope.yr = "21"; //sdate.getFullYear().toString().substr(2,2);
+			$scope.yr = sdate.getFullYear().toString().substr(2,2);
 			$scope.coretag;
 			$scope.ulinetag;
 			$scope.orderCode;
