@@ -193,7 +193,7 @@ app.directive('autoComplete', function($timeout) {
 					tDiv = 	'<div class="row madeInCanada" style="line-height:1.1;">'+
 							'<span>15312077PACKSYS MEXICO</span><br><span>SA DE CV.</span></div>'+
 								'<div class="row arrow-yr">'+
-									'<span class="year">GCAS: 90852754</span>'+
+									'<span class="">GCAS: 90852754</span>'+
 								'</div>'+
 								'<div class="row ulineCode">LOTE-'+$scope.coretag+'</div>'+
 								'<div class="row orderNumber ng-binding">FECHA DE PRODUCTION</div>'+
@@ -272,7 +272,7 @@ app.directive('autoComplete', function($timeout) {
 					tDiv = 	'<div class="row madeInCanada" style="line-height:1.1;">'+
 							'<span>15312077PACKSYS MEXICO</span><br><span>SA DE CV.</span></div>'+
 								'<div class="row arrow-yr">'+
-									'<span class="year">GCAS: 90852754</span>'+
+									'<span class="">GCAS: 90852754</span>'+
 								'</div>'+
 								'<div class="row ulineCode">LOTE-'+$scope.coretag+'</div>'+
 								'<div class="row orderNumber ng-binding">FECHA DE PRODUCTION</div>'+
