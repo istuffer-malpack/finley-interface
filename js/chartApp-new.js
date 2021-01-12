@@ -54,12 +54,8 @@ titleTextStyle: {
   chart.draw(data, options);
 }
 
-
-
-
-   
-	google.charts.setOnLoadCallback(drawBar);
-	function drawBar() {
+	
+function drawBar() {
 
 		var d = [];
 		d.push(['Product', 'Total Number of Lbs.']);
@@ -103,9 +99,10 @@ titleTextStyle: {
 
       chart.draw(data, options);
     }
+google.charts.setOnLoadCallback(drawBar);
 
-	google.charts.setOnLoadCallback(drawChartColumn);
-    function drawChartColumn() {
+
+function drawChartColumn() {
 		
 		var d = [];
 		d.push(['Line', 'Total Lbs Produced', { role: 'style' } ]);
@@ -152,7 +149,7 @@ titleTextStyle: {
 			
             
   }
-  
+  	google.charts.setOnLoadCallback(drawChartColumn);
   
 function drawChart2() {
 	
@@ -261,7 +258,7 @@ setTimeout(function(){
 	drawBar();
 	drawChart2();	
 	//drawChart();	
-	},4000);
+	},5000);
 
 document.getElementsByTagName("BODY")[0].onresize = function() {
 	drawChartColumn();
