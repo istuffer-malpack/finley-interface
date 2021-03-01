@@ -162,20 +162,15 @@ app.directive('autoComplete', function($timeout) {
 			$scope.getOrders();
 			$scope.getQC();
 			$scope.getMessage();
-			//$scope.getDefectData();
 			$scope.getLineInfo();
 			$scope.summaryByProduct();
 
 			$interval(function() {$scope.getOrders();}, 60 * 1000);
 			$interval(function() {
 				$scope.getQC();
-				//$scope.getDefectData();
 				$scope.getLineInfo();
-				$scope.summaryByProduct();
-				
-					drawChart2();//drawChart();	
-					
-				
+				$scope.summaryByProduct();				
+				drawChart2(); //drawChart();				
 			}, 5 * 60 * 1000);
 
 			$scope.populateJO = function(data) {
@@ -183,8 +178,17 @@ app.directive('autoComplete', function($timeout) {
 				$scope.currentOrder = data;
 				$scope.coretag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? ulineCode[data.PRODUCT_ID] : getCoreTag(data.PRODUCT_ID,data.SKID_QTY);
 				$scope.ulinetag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? getCoreTag(data.PRODUCT_ID,data.SKID_QTY) : '';
-
-				document.querySelector('.recipe').innerHTML = '<table style="margin: 0 auto;"><tbody>'+data.RECIPECODE+'</tbody></table>';
+				//alert($scope.linen);
+				var textContent = '<table style="margin: 0 auto;"><tbody>'+data.RECIPECODE+'</tbody></table>';
+				if($scope.linen == "LINE 7" || $scope.linen == "LINE 8" || $scope.linen == "LINE 9"){
+					textContent = '<div class="center aligned" style="text-align: center;padding: 25px;">'+
+										'<button class="ui large teal button center aligned" style="display: inline-block;" onclick="createModal(\''+data.PRODUCT_ID+'\',\''+$scope.linen+'\')">'+
+											'PRODUCT RECIPE AND PROCESS TEMPERATURE'+
+									    '</button>'+
+								  '</div>';
+				}
+				document.querySelector('.recipe').innerHTML = textContent;
+				
 				var oCodeSuffix = ((data.PRODUCT_ID.split("-")[5]).indexOf('00') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('Q0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('C0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('P0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('N0') > -1) ? "" : data.PRODUCT_ID.split("-")[5];
 
 				var oCode = data.ORDER_NUMBER+''+oCodeSuffix;
@@ -213,11 +217,7 @@ app.directive('autoComplete', function($timeout) {
 							'<div class="row orderNumber ng-binding">'+oCode+'</div>'+
 							'<div class="row shift ng-binding">'+$scope.timestamped(data.SCHEDULED_LINE)+'</div>';
 						
-				}
-				
-				//$('#jobOrderModal .coretag-label').html(tDiv);
-				//var modal = document.getElementById("jobOrderModal");
-				//modal.style.display = "block";
+				}				
 				showModal('job_order');
 			};
 
@@ -293,16 +293,16 @@ app.directive('autoComplete', function($timeout) {
 							'<div class="row shift ng-binding">'+$scope.timestamped($scope.linenumber)+'</div>';
 						
 				}
-				
+				$('#coreTagPrint .input input').val($scope.noOfPrints);
 				$('#coreTagPrint .coretag-label').html(tDiv);
-				//var modal = document.getElementById("coreTagPrint");
-				//modal.style.display = "block";
 				showModal('coreTagPrint');
 
 			};
 
 			$scope.printCoreTagLabel = function(ordnum,qty,noOfPrints,shiftTag,customLabel,customerName,prod_id){
+				
 				prod_id = prod_id.toUpperCase();
+				noOfPrints = $('#coreTagPrint .input input').val();
 				if(typeof noOfPrints === 'undefined'){
 					noOfPrints = 20;
 				}	
@@ -311,7 +311,7 @@ app.directive('autoComplete', function($timeout) {
 				var suffix = ((prod_id.split("-")[5]).indexOf('00') > -1 || (prod_id.split("-")[5]).indexOf('Q0') > -1 || (prod_id.split("-")[5]).indexOf('C0') > -1 || (prod_id.split("-")[5]).indexOf('P0') > -1 || (prod_id.split("-")[5]).indexOf('N0') > -1) ? "" : prod_id.split("-")[5]
 
 				var orderCode = "ORD"+ordnum.toString().toLowerCase().replace("ord","") +""+suffix;
-				//console.log(coretag+"/"+ulinetag+"/"+orderCode+"/"+shiftTag+"/"+noOfPrints+"/"+customLabel+"/"+customerName+"/"+prod_id);
+				
 				writeToSelectedPrinter(coretag,ulinetag,orderCode,shiftTag,noOfPrints,customLabel,customerName,prod_id);
 				
 			};
@@ -518,31 +518,7 @@ app.directive('autoComplete', function($timeout) {
 										'<div class="sixteen wide column left aligned">'+
 											'<div class="skid_label_footer row">'+footerLogo+'</div>'+
 										'</div>'+
-									+'</div>';
-					
-					
-					
-					/* '<div class="content center aligned" style="margin: 0 auto;">'+
-									'<div class="skid_label_logo center aligned row">'+									
-										labelLogo +										
-									'</div>'+
-									'<div class="skid_label_customer center aligned row">'+custname+'</div>'+
-									'<div class="skid_label_product_desc center aligned row" style="font-size:65px;">'+
-										ppp+
-									'</div>'+
-									'<div class="skid_label_po row">'+
-										coretaglabel +														
-											qtylabel +		
-										'</div>'+
-										'<div class="skid_label_counter two columns" style="position: relative;">'+
-											'<span class="top">'+(i+1)+'</span><span class="bottom">'+noOfskids+'</span>'+
-										'</div>' +
-									'</div>'+
-									'<div class="skid_label_footer row">'+
-										footerLogo+
-									'</div>'+
-								'</div>' */;
-					
+									+'</div>';					
 				}
 				
 
@@ -592,17 +568,13 @@ app.directive('autoComplete', function($timeout) {
 			  'Operator': localStorage.shift
 			 });
 			 //send message to google sheets
-			 var dataUrl = "https://script.google.com/macros/s/AKfycbza85RHYVyl8LGMN6lmqw_8AESHPZ5dVnqRnV00BQba24U4RRI/exec?Message=" +
-			  $scope.addMe + "&Operator=" + localStorage.shift;
+			 var dataUrl = "https://script.google.com/macros/s/AKfycbza85RHYVyl8LGMN6lmqw_8AESHPZ5dVnqRnV00BQba24U4RRI/exec?Message=" +  $scope.addMe + "&Operator=" + localStorage.shift;
 
 			 $http.get(dataUrl).then(function(response) {
 
 			  if (response.data.result === 'success') {
-			   //console.log("to write localstorage");
 				$('#MessageForm textarea').val("");
-				//closeModal('sendMessageForm');
 			  }
-
 			 });
 
 			} else {
@@ -633,29 +605,6 @@ app.directive('autoComplete', function($timeout) {
 	  init();
 	}
 ]);
-
-
-function showModal(ele){
-	$('.ui.modal.'+ele).modal({
-        onHide: function(){
-            		$('#printcss').remove();
-		if(ele != 'coreTagPrint'){
-			$('.ui.modal.'+ele+' input').val("");
-		}
-			$('.ui.modal.'+ele+' textarea').val("");
-			$('.ui.modal.'+ele+' select').prop('selectedIndex',0);
-			$('.ui.modal input[type=checkbox], .ui.modal input[type=radio]').prop('checked',false);
-		
-		if(ele == 'daily_operator_checklist'){
-			$('.main_question').trigger('change');
-		}
-			
-        }
-    }).modal('show');
-	//var pos = $('.ui.modal.'+ele).position().left;
-			//$('.ui.modal.'+ele).css("left",pos);
-}
-
 
 function printBarcode(skidnumber,prodid,qty){
 	var noOfCopies = 0;
@@ -706,10 +655,58 @@ function printBarcode(skidnumber,prodid,qty){
 
 }
 function printJOform(){
-//  var htmlContent = $('#job_Order_Form');
-  //$('#printJobOrderForm').append(htmlContent);
   $('#job_order').printElem('',0,0,localStorage.shift,"");
 }
+
+
+function showModal(ele){
+	
+	$('.ui.modal.'+ele).modal({
+		allowMultiple: true,
+        onHide: function(){
+            		$('#printcss').remove();
+		//if(ele != 'coreTagPrint'){
+			$('.ui.modal.'+ele+' input').val("");
+		//}
+			$('.ui.modal.'+ele+' textarea').val("");
+			$('.ui.modal.'+ele+' select').prop('selectedIndex',0);
+			$('.ui.modal input[type=checkbox], .ui.modal input[type=radio]').prop('checked',false);
+		
+		if(ele == 'daily_operator_checklist'){
+			$('.main_question').trigger('change');
+		}
+			
+        }
+    }).modal('show');	
+}
+
+function createModal(product,line){
+	
+	$("#recipeTempModal").remove();	
+	
+		var dataRecipe = {
+							"AX-M":"1X7iQ5MovgqeF6ctnp8WqoA1axoC3dyx0;1QzUAC6-mRz6yg0rduG_JDJY8jMod9Atj",
+							"PL-M":"1qV5w_JkDBQLFZnUe5hsmMGDbG1piC895;1aqCMfg1TRG79mgLaKzhRLNQ4uH_ZopJx",
+							"PR-M":"1U3r2wo-aocc6Qj8Nx5vG4SePdhDOFI1L;11VxC7b5lF7IAfEU8IoETeI5W7tWuTBfy"
+						};
+						
+		var recipe_product = (dataRecipe[product.substr(0,4)]).split(";")[1];
+		var process_temp = (dataRecipe[product.substr(0,4)]).split(";")[0];
+		
+		$('body').append('<div class="ui large modal recipeTempModal" id="recipeTempModal" style="margin-top:80px;">'+
+			'<i class="close right aligned" style="color: red;font-weight: 700;font-style: normal;top: 0;right: 20px;font-size: 24px;padding: 15px;">X</i>'+			
+			'<div class="content" id="process_content">'+
+				'<h3 class="ui teal text header margin-25">PRODUCT RECIPE</h3>'+
+				'<div style="text-align:center;"><img class="product-recipe-img" src="https://drive.google.com/uc?export=view&amp;id='+recipe_product+'"></div>'+
+				'<h3 class="ui teal text header margin-25">PROCESS TEMPERATURE</h3>'+
+				'<div style="text-align:center;"><img class="process-temp-img" src="https://drive.google.com/uc?export=view&amp;id='+process_temp+'"></div>'+
+			'</div>'+
+		'</div>');
+		setTimeout(function(){
+			showModal('recipeTempModal');
+		},500);
+}
+
 
 jQuery.fn.extend({
  printElem: function(a,b,c,d,e) {
@@ -772,11 +769,6 @@ jQuery.fn.extend({
 	
  }
 });
-
-
-
-
-
 
 var coll = document.getElementsByClassName("collapsible");
 var i;
@@ -868,6 +860,8 @@ var span = document.getElementsByClassName("close")[0];
 	}
 	window.addEventListener("click", windowOnClick);
  */
+ 
+ 
 
 //toggle switch
 function toggleswitch() {
@@ -959,32 +953,9 @@ $('input[name="question8a"]').click(function(){$(this).next().trigger('click');}
   var submittedby = $('input[name="submitby"]').val();
   var shift = $('input[name="shift"]').val();
   var flagged = true;
-  //console.log(line+" "+question6+" "+question7+" "+question8+" "+question9+" "+comment+" "+submittedby);
+ 
 	var data = "line="+line+"&q6="+question6+"&q7="+question7+"&q8="+question8+"&q9="+question9+"&comment=" + escape(comment) + "&submittedby="+submittedby+"&shift="+shift;
-	//if(line != '' && question6 != '', )
 	
-	//console.log(data);
-	/*	if(typeof question6 === 'undefined'){
-			alert('Please select Die/Lip, Cast Roll Cleaning whether it is "Scheduled" or "Quality Issue".');
-			flagged = false;
-		}
-		if(typeof question8 === 'undefined'){
-			alert('Please select changed blades whether it is "New Blades" or "Flipped".');
-			flagged = false;
-		}
-		if(line == ''){
-			alert('Please select machine line.');
-			flagged = false;
-		}
-		if(submittedby == ''){
-			alert('Please enter operator name.');
-			flagged = false;
-		}
-		if(question6 == '' && question7 == '' && question8 == '' && question9 ==''){
-			alert('Please at least one of the items to be reported.');
-			flagged = false;
-		}*/
-
 	if(flagged){
 
 		$.ajax({
