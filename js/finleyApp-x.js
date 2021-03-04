@@ -682,29 +682,20 @@ function showModal(ele){
 
 function createModal(product,line){
 	
-	$("#recipeTempModal").remove();	
-	
-		var dataRecipe = {
-							"AX-M":"1X7iQ5MovgqeF6ctnp8WqoA1axoC3dyx0;1QzUAC6-mRz6yg0rduG_JDJY8jMod9Atj",
-							"PL-M":"1qV5w_JkDBQLFZnUe5hsmMGDbG1piC895;1aqCMfg1TRG79mgLaKzhRLNQ4uH_ZopJx",
-							"PR-M":"1U3r2wo-aocc6Qj8Nx5vG4SePdhDOFI1L;11VxC7b5lF7IAfEU8IoETeI5W7tWuTBfy"
-						};
+	$("#recipeTempModal").remove();			
 						
-		var recipe_product = (dataRecipe[product.substr(0,4)]).split(";")[1];
-		var process_temp = (dataRecipe[product.substr(0,4)]).split(";")[0];
-		
+		var recipe_product = product.substr(0,4) + "-" + line.replace(" ","-");
+		//var process_temp = (dataRecipe[product.substr(0,4)]).split(";")[0];
+		//console.log(recipe_product);
 		$('body').append('<div class="ui large modal recipeTempModal" id="recipeTempModal" style="margin-top:80px;">'+
 			'<i class="close right aligned" style="color: red;font-weight: 700;font-style: normal;top: 0;right: 20px;font-size: 24px;padding: 15px;">X</i>'+			
 			'<div class="content" id="process_content">'+
-				'<h3 class="ui teal text header margin-25">PRODUCT RECIPE</h3>'+
-				'<div style="text-align:center;"><img class="product-recipe-img" src="https://drive.google.com/uc?export=view&amp;id='+recipe_product+'"></div>'+
-				'<h3 class="ui teal text header margin-25">PROCESS TEMPERATURE</h3>'+
-				'<div style="text-align:center;"><img class="process-temp-img" src="https://drive.google.com/uc?export=view&amp;id='+process_temp+'"></div>'+
+				'<div style="text-align:center;"><img class="product-recipe-img" style="width:100%;" src="https://istuffer-malpack.github.io/finley-interface/img/'+recipe_product+'.jpg"></div>'+
 			'</div>'+
 		'</div>');
 		setTimeout(function(){
 			showModal('recipeTempModal');
-		},500);
+		},100);
 }
 
 
