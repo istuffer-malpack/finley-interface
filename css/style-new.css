@@ -310,7 +310,9 @@ tr.ON-GOING {
     color: #fd7e14;
 	cursor: pointer;
 }
-.schedule-table tbody tr:last-child{display:none!important;}
+
+/*.schedule-table tbody tr:last-child{display:none!important;}*/
+
 .recipe div {padding: 10px; }
 .recipe h6{padding: 7px;}
 .recipe table {
