@@ -324,7 +324,7 @@ app.directive('autoComplete', function($timeout) {
 					
 					if(isManualPrint){
 						
-						if((typeof skidnumbers === 'undefined') || (skidnumbers == '' && prodid.length != 22 || prodid.split("-").length !=6)){
+						if((typeof skidnumbers === 'undefined') && (skidnumbers == '' && prodid.length != 22 || prodid.split("-").length !=6)){
 							
 							alert('Please enter the correct Product Code. ie. AX-M-500-045-6000-Q050 and/or enter barcode ids to print.');								
 							
