@@ -324,7 +324,7 @@ app.directive('autoComplete', function($timeout) {
 					
 					if(isManualPrint){
 						
-						if((typeof skidnumbers === 'undefined') && (skidnumbers == '' && prodid.length != 22 || prodid.split("-").length !=6)){
+						if(typeof skidnumbers === 'undefined') || skidnumbers == ''){
 							
 							alert('Please enter the correct Product Code. ie. AX-M-500-045-6000-Q050 and/or enter barcode ids to print.');								
 							
@@ -371,8 +371,8 @@ app.directive('autoComplete', function($timeout) {
 							if (r == true) {
 								
 							  printBarcode(skidnumbers,prodid,qty);
-							  $scope.prodC = "";
-							  $scope.skidnumbers1 = "";
+							 // $scope.prodC = "";
+							//  $scope.skidnumbers1 = "";
 							  
 							} else {
 							  txt = "You pressed Cancel!";
