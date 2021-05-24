@@ -77,7 +77,9 @@ app.directive('autoComplete', function($timeout) {
 			$scope.showQcChart = false;
 			$scope.customLabel = 'Standard';
 			//$scope.yesterday = $scope.currentTime.setDate($scope.currentTime.getDate() - 1);
-			
+			$scope.prodC = "";
+			$scope.skidnumbers1 = "";
+						 
 			$scope.getOrders = function(){
 				overviewService.getAllOrders().then(
 					function successCallback(response) {
@@ -302,6 +304,7 @@ app.directive('autoComplete', function($timeout) {
 			$scope.printCoreTagLabel = function(ordnum,qty,noOfPrints,shiftTag,customLabel,customerName,prod_id){
 				
 				prod_id = prod_id.toUpperCase();
+				
 				noOfPrints = $('#coreTagPrint .input input').val();
 				if(typeof noOfPrints === 'undefined'){
 					noOfPrints = 20;
@@ -320,72 +323,78 @@ app.directive('autoComplete', function($timeout) {
 
 			$scope.printBC = function(skidnumbers,prodid,qty,isManualPrint){
 				
-					prodid = prodid.toUpperCase();
+				//validations
+				var validatedProdID = true;			
+				var validatedSkids = true;			
+				
+				if(isManualPrint){
+					var inputVal = $('.skidTagPrint input').val();
 					
-					if(isManualPrint){
+					if(inputVal == '' || (inputVal.length != 22 && inputVal.split("-").length != 6)){		
 						
-						if(typeof skidnumbers === 'undefined' || skidnumbers == ''){
-							
-							alert('Please  enter barcode ids to print.');								
-							
-						}else{
-
-								var skidIDS = new Array();
-								var skidnumberArray = skidnumbers.split(';');
-
-									for(var i=0;i<skidnumberArray.length;i++){
-
-										if(skidnumberArray[i].indexOf('-') > -1){
-
-											var skidWithDash = skidnumberArray[i].split('-');
-											var count = (parseInt(skidWithDash[1]) - parseInt(skidWithDash[0])) + 1;
-											var start = parseInt(skidWithDash[0]);
-
-											for(var j=0;j<count;j++){
-												skidIDS.push(start + j);
-											}
-
-										}else{
-											skidIDS.push(parseInt(skidnumberArray[i]));
-										}
-									}
-									//console.log(skidIDS.join(','));
-									skidnumbers = (skidIDS.length == 1) ? skidIDS.toString() : skidIDS.join(',');
-									//console.log(skidIDdta+";"+prodid+";"+skidIDS.length);
-									qty = skidIDS.length;
-									//printBarcode(skidIDdta,prodid,qty);
-									
-
-						}
-						
-						$('.ui.modal.skidTagPrint').modal('hide');
-						
+						alert("Please enter correct format for Product Code. ie. AX-M-500-045-9000-Q040");
+						validatedProdID = false;						
 						
 					}
+					
+					var bcInputVal = $('.skidTagPrint textarea').val();
+					
+					if(bcInputVal != '' && (!isNaN(bcInputVal) || bcInputVal.indexOf(';') > -1 || bcInputVal.indexOf('-') > -1)){
 						
-						if(skidnumbers.length > 0){
+						var skidIDS = new Array();
+						var skidnumberArray = bcInputVal.split(';');
+
+							for(var i=0;i<skidnumberArray.length;i++){
+								if(skidnumberArray[i].indexOf('-') > -1){
+
+									var skidWithDash = skidnumberArray[i].split('-');
+									var count = (parseInt(skidWithDash[1]) - parseInt(skidWithDash[0])) + 1;
+									var start = parseInt(skidWithDash[0]);
+
+										for(var j=0;j<count;j++){
+												skidIDS.push(start + j);
+										}
+
+								}else{
+									skidIDS.push(parseInt(skidnumberArray[i]));
+								}
+							}
+								//console.log(skidIDS.join(','));
+								skidnumbers = (skidIDS.length == 1) ? skidIDS.toString() : skidIDS.join(',');
+								//console.log(skidIDdta+";"+prodid+";"+skidIDS.length);
+								qty = skidIDS.length;
+								//printBarcode(skidIDdta,prodid,qty);								
+								$('.ui.modal.skidTagPrint').modal('hide');
+								$('.ui.modal.skidTagPrint input, .ui.modal.skidTagPrint textarea').val("");
+					}else{
+						alert('Please  enter barcode ids to print.');		
+						validatedSkids = false;
+					}
+					
+					
+				}
+					
+				if(validatedSkids && validatedProdID){
+					
+					if(skidnumbers.length > 0){
 							var skidIdFrom = skidnumbers.split(",")[0];
 							var skidIdTo = skidnumbers.split(",")[(skidnumbers.split(",")).length - 1];
 							var txt;
 							var r = confirm("The following barcodes from "+ skidIdFrom + " to "+ skidIdTo +" will be printed. \nPress OK to confirm.");
-							if (r == true) {
+							if (r == true) {						
 								
-							  printBarcode(skidnumbers,prodid,qty);
-							 // $scope.prodC = "";
-							//  $scope.skidnumbers1 = "";
+								printBarcode(skidnumbers,prodid.toUpperCase(),qty);							 
 							  
 							} else {
 							  txt = "You pressed Cancel!";
-							}
-
+							}						
+							
 						}else{
-							$scope.productId = prodid;
-							//var modal = document.getElementById('skidTagPrint');
-							$('#skidtag .form input').val('');
-							//modal.style.display = "block";
+							$scope.productId = prodid;							
 							showModal('skidTagPrint');
 						}
-
+						
+				}
 			};
 
 			
@@ -601,8 +610,7 @@ app.directive('autoComplete', function($timeout) {
 		   return Date.now();		   
 	   };
 	   
-	   $interval(function() {$scope.currentAsofTime();}, 60 * 1000);
-
+	   $interval(function() {$scope.currentAsofTime();}, 60 * 1000);	
 
 	  };
 	  init();
@@ -667,7 +675,7 @@ function showModal(ele){
 	$('.ui.modal.'+ele).modal({
 		allowMultiple: true,
         onHide: function(){
-            		$('#printcss').remove();
+            $('#printcss').remove();
 		//if(ele != 'coreTagPrint'){
 			$('.ui.modal.'+ele+' input').val("");
 		//}
@@ -678,6 +686,8 @@ function showModal(ele){
 		if(ele == 'daily_operator_checklist'){
 			$('.main_question').trigger('change');
 		}
+			
+			//resetValueInput();
 			
         }
     }).modal('show');	
@@ -974,4 +984,14 @@ $('input[name="question8a"]').click(function(){$(this).next().trigger('click');}
 $(document).ready(function(){
 	$('.modal').prepend('<i class="close inside" style="font-weight:700;font-style:normal">X</i>');
 	$('.year').text("21");
+	
+	$('#printLabelCoretag input[ng-model="prod_id"]').blur(function(e){
+		var inputVal = $('#printLabelCoretag input[ng-model="prod_id"]').val();
+		
+		if(inputVal.length != 22 && inputVal.split("-").length != 6){
+			alert("Please enter correct format for Product Code. ie. AX-M-500-045-9000-Q040");
+			
+		}	
+		
+	}); 
 });
