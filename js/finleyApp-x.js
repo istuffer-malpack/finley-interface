@@ -180,16 +180,17 @@ app.directive('autoComplete', function($timeout) {
 				$scope.currentOrder = data;
 				$scope.coretag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? ulineCode[data.PRODUCT_ID] : getCoreTag(data.PRODUCT_ID,data.SKID_QTY);
 				$scope.ulinetag = (data.CUSTOMERID == 'ULINE' || data.CUSTOMERID == 'ULINEC') ? getCoreTag(data.PRODUCT_ID,data.SKID_QTY) : '';
-				//alert($scope.linen);
-				var textContent = '<table style="margin: 0 auto;"><tbody>'+data.RECIPECODE+'</tbody></table>';
-				if(($scope.linen == "LINE 7" || $scope.linen == "LINE 8" || $scope.linen == "LINE 9") && ((data.PRODUCT_ID).substr(0,4) == "AX-M" || (data.PRODUCT_ID).substr(0,4) == "PL-M" || (data.PRODUCT_ID).substr(0,4) == "PR-M")){
+				//img insert
+			var textContent = '<table style="margin: 0 auto;"><tbody>'+data.RECIPECODE+'</tbody></table>';
+			/*		if(($scope.linen == "LINE 7" || $scope.linen == "LINE 8" || $scope.linen == "LINE 9") && ((data.PRODUCT_ID).substr(0,4) == "AX-M" || (data.PRODUCT_ID).substr(0,4) == "PL-M" || (data.PRODUCT_ID).substr(0,4) == "PR-M")){
 					textContent = '<div class="center aligned" style="text-align: center;padding: 25px;">'+
 										'<button class="ui large teal button center aligned" style="display: inline-block;" onclick="createModal(\''+data.PRODUCT_ID+'\',\''+$scope.linen+'\')">'+
 											'PRODUCT RECIPE AND PROCESS TEMPERATURE'+
 									    '</button>'+
 								  '</div>';
-				}
+				}*/
 				document.querySelector('.recipe').innerHTML = textContent;
+				
 				
 				var oCodeSuffix = ((data.PRODUCT_ID.split("-")[5]).indexOf('00') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('Q0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('C0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('P0') > -1 || (data.PRODUCT_ID.split("-")[5]).indexOf('N0') > -1) ? "" : data.PRODUCT_ID.split("-")[5];
 
