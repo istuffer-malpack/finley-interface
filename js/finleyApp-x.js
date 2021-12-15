@@ -306,7 +306,7 @@ app.directive('autoComplete', function($timeout) {
 				
 				prod_id = prod_id.toUpperCase();
 				
-				noOfPrints = $('#coreTagPrint .input input').val();
+				//noOfPrints = $('#coreTagPrint .input input').val();
 				if(typeof noOfPrints === 'undefined'){
 					noOfPrints = 20;
 				}	
